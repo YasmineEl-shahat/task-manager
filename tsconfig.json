@@ -22,7 +22,8 @@
       "@app/*": ["./src/app/*"],
       "@features/*": ["./src/app/features/*"],
       "@tasks/*": ["./src/app/features/tasks/*"],
-      "@dashboard/*": ["./src/app/features/dashboard/*"]
+      "@dashboard/*": ["./src/app/features/dashboard/*"],
+      "@env": ["./src/environments/environment.ts"]
     }
   },
   "angularCompilerOptions": {
