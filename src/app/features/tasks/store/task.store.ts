@@ -1,93 +1,152 @@
-import {
-  computed,
-  inject,
-  Injectable,
-  signal,
-} from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { httpResource } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { exhaustMap, switchMap, tap } from 'rxjs/operators';
+import { exhaustMap, tap } from 'rxjs/operators';
 
+import { environment } from '@env';
 import { CreateTaskDto, UpdateTaskDto } from '@tasks/models/task.dto';
 import { INITIAL_TASK_FILTERS, TaskFilters } from '@tasks/models/task-filter.model';
 import { TaskFilterPriority, TaskFilterStatus } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
-import { TaskApiService, TaskQueryParams } from '@tasks/services/task-api.service';
-
-// ─── State shape ─────────────────────────────────────────────────────────────
-
-export interface TaskState {
-  tasks: Task[];
-  filters: TaskFilters;
-  selectedTaskId: string | null;
-  isLoading: boolean;
-  isMutating: boolean;
-  error: string | null;
-  totalCount: number;
-  lastUpdated: string | null;
-}
-
-const INITIAL_STATE: TaskState = {
-  tasks: [],
-  filters: INITIAL_TASK_FILTERS,
-  selectedTaskId: null,
-  isLoading: false,
-  isMutating: false,
-  error: null,
-  totalCount: 0,
-  lastUpdated: null,
-};
+import { TasksResponse } from '@tasks/models/tasks-response.model';
+import { TaskApiService } from '@tasks/services/task-api.service';
 
 // ─── Store ───────────────────────────────────────────────────────────────────
 
 /**
  * Signal-based store for the Task feature.
  *
- * Responsibilities:
- * - Holds all task state as fine-grained signals
- * - Exposes derived `computed` signals (filtered list, stats, selected task)
- * - Coordinates async CRUD through RxJS pipelines that write back into signals
- * - Keeps the `TaskApiService` as the single data-access layer
+ * **Read strategy — `httpResource`**
+ * The task list and selected-task detail are fetched via `httpResource`, which
+ * is reactive on signal dependencies: changing `_filters` or `_selectedTaskId`
+ * automatically cancels the in-flight request and issues a new one. No manual
+ * "load" trigger or `switchMap` pipe is needed.
  *
- * Design decisions:
- * - `switchMap` for reads (cancels in-flight requests when filters change)
- * - `exhaustMap` for mutations (ignores duplicate triggers while in flight)
- * - `takeUntilDestroyed` for automatic subscription cleanup
+ * **Write strategy — RxJS + `HttpClient`**
+ * Mutations (create / update / patch / delete) go through `exhaustMap` pipelines
+ * that call `TaskApiService`. After each successful write the tasks resource is
+ * reloaded so the list stays in sync with the server.
+ *
+ * **Cleanup**
+ * `takeUntilDestroyed()` wires mutation subscriptions to the injection context's
+ * destroy event, so no manual `unsubscribe` is needed.
  */
 @Injectable({ providedIn: 'root' })
 export class TaskStore {
   private readonly api = inject(TaskApiService);
+  private readonly baseUrl = environment.apiBaseUrl + '/tasks';
 
-  // ─── Private writable state ──────────────────────────────────────────────
+  // ─── Filter state (drives the reactive resource) ─────────────────────────
 
-  private readonly _tasks = signal<Task[]>(INITIAL_STATE.tasks);
-  private readonly _filters = signal<TaskFilters>(INITIAL_STATE.filters);
-  private readonly _selectedTaskId = signal<string | null>(INITIAL_STATE.selectedTaskId);
-  private readonly _isLoading = signal(INITIAL_STATE.isLoading);
-  private readonly _isMutating = signal(INITIAL_STATE.isMutating);
-  private readonly _error = signal<string | null>(INITIAL_STATE.error);
-  private readonly _totalCount = signal(INITIAL_STATE.totalCount);
-  private readonly _lastUpdated = signal<string | null>(INITIAL_STATE.lastUpdated);
-
-  // ─── Public read-only signals ────────────────────────────────────────────
-
-  readonly tasks = this._tasks.asReadonly();
+  private readonly _filters = signal<TaskFilters>(INITIAL_TASK_FILTERS);
   readonly filters = this._filters.asReadonly();
-  readonly selectedTaskId = this._selectedTaskId.asReadonly();
-  readonly isLoading = this._isLoading.asReadonly();
-  readonly isMutating = this._isMutating.asReadonly();
-  readonly error = this._error.asReadonly();
-  readonly totalCount = this._totalCount.asReadonly();
-  readonly lastUpdated = this._lastUpdated.asReadonly();
 
-  // ─── Derived / computed signals ──────────────────────────────────────────
+  // ─── Selected task state ─────────────────────────────────────────────────
+
+  private readonly _selectedTaskId = signal<string | null>(null);
+  readonly selectedTaskId = this._selectedTaskId.asReadonly();
+
+  // ─── Mutation state ───────────────────────────────────────────────────────
+
+  private readonly _isMutating = signal(false);
+  readonly isMutating = this._isMutating.asReadonly();
+
+  /** Error from the last failed mutation (not from the resource). */
+  private readonly _mutationError = signal<string | null>(null);
+
+  // ─── httpResource — task list ─────────────────────────────────────────────
+
+  /**
+   * Reactive resource for the paginated / filtered task list.
+   *
+   * Re-fetches automatically whenever `_filters` changes.
+   * Returns `undefined` while loading or on error (use `isLoading` / `error`).
+   */
+  private readonly _tasksResource = httpResource<TasksResponse>(() => {
+    const { status, priority, assigneeId, search } = this._filters();
+
+    // Build only the params that deviate from "show everything"
+    const params: Record<string, string> = {};
+    if (status !== TaskFilterStatus.ALL) params['status'] = status;
+    if (priority !== TaskFilterPriority.ALL) params['priority'] = priority;
+    if (assigneeId !== null) params['assigneeId'] = assigneeId;
+    if (search.trim()) params['search'] = search.trim();
+
+    return { url: this.baseUrl, params };
+  });
+
+  // ─── httpResource — selected task detail ─────────────────────────────────
+
+  /**
+   * Reactive resource for the currently selected task's full detail.
+   *
+   * Returns `undefined` (and fires no request) when nothing is selected.
+   * Re-fetches automatically when `_selectedTaskId` changes.
+   */
+  private readonly _selectedTaskResource = httpResource<Task>(() => {
+    const id = this._selectedTaskId();
+    return id ? { url: `${this.baseUrl}/${id}` } : undefined;
+  });
+
+  // ─── Public derived signals ───────────────────────────────────────────────
+
+  /** Raw task list from the server (empty array while loading). */
+  readonly tasks = computed(() => this._tasksResource.value()?.tasks ?? []);
+
+  /** Total count from the server-side pagination meta. */
+  readonly totalCount = computed(
+    () => this._tasksResource.value()?.meta.totalCount ?? 0,
+  );
+
+  /** ISO timestamp of the last server update from meta. */
+  readonly lastUpdated = computed(
+    () => this._tasksResource.value()?.meta.lastUpdated ?? null,
+  );
+
+  /** `true` while the task list is being (re)fetched. */
+  readonly isLoading = this._tasksResource.isLoading;
+
+  /** `true` while the selected-task detail is being fetched. */
+  readonly isSelectedTaskLoading = this._selectedTaskResource.isLoading;
+
+  /** `true` while a mutation request is in-flight. */
+  readonly isBusy = computed(
+    () => this._tasksResource.isLoading() || this._isMutating(),
+  );
+
+  /**
+   * Combined error signal — surfaces either a mutation error or the resource
+   * fetch error, whichever is most recent. `null` when everything is healthy.
+   */
+  readonly error = computed<string | null>(() => {
+    const mutErr = this._mutationError();
+    if (mutErr) return mutErr;
+
+    const resErr = this._tasksResource.error();
+    if (!resErr) return null;
+    return resErr instanceof Error ? resErr.message : 'Failed to load tasks.';
+  });
+
+  /**
+   * Full detail of the currently selected task, or `null` when nothing is
+   * selected or the detail request is still in flight.
+   */
+  readonly selectedTask = computed(
+    () => this._selectedTaskResource.value() ?? null,
+  );
+
+  // ─── Derived / computed signals ───────────────────────────────────────────
 
   /**
    * Client-side filtered + searched slice of the task list.
-   * Used when the API returns a full list and filtering is done locally.
+   *
+   * Because filters are also sent to the API, this computed is primarily useful
+   * for the `search` field (instant feedback before the round-trip completes)
+   * and as a safety net for any stale data.
    */
   readonly filteredTasks = computed(() => {
-    const tasks = this._tasks();
+    const tasks = this._tasksResource.value()?.tasks ?? [];
     const { status, priority, assigneeId, search } = this._filters();
     const query = search.trim().toLowerCase();
 
@@ -112,15 +171,9 @@ export class TaskStore {
     });
   });
 
-  /** Currently selected task entity, or `null` when nothing is selected. */
-  readonly selectedTask = computed(() => {
-    const id = this._selectedTaskId();
-    return id ? (this._tasks().find((t) => t.id === id) ?? null) : null;
-  });
-
   /** Aggregate statistics derived from the full task list. */
   readonly stats = computed(() => {
-    const tasks = this._tasks();
+    const tasks = this._tasksResource.value()?.tasks ?? [];
     const now = new Date();
 
     return {
@@ -136,202 +189,171 @@ export class TaskStore {
     };
   });
 
-  /** `true` while either a load or a mutation is in progress. */
-  readonly isBusy = computed(() => this._isLoading() || this._isMutating());
+  // ─── Action subjects (mutation pipelines) ────────────────────────────────
 
-  // ─── Action subjects (RxJS pipelines) ────────────────────────────────────
-
-  private readonly loadTasks$ = new Subject<TaskQueryParams | undefined>();
   private readonly createTask$ = new Subject<CreateTaskDto>();
   private readonly updateTask$ = new Subject<{ id: string; dto: CreateTaskDto }>();
   private readonly patchTask$ = new Subject<{ id: string; dto: UpdateTaskDto }>();
   private readonly deleteTask$ = new Subject<string>();
 
-  // ─── Constructor — wire up pipelines ─────────────────────────────────────
+  // ─── Constructor — wire up mutation pipelines ─────────────────────────────
 
   constructor() {
-    this.registerLoadPipeline();
     this.registerCreatePipeline();
     this.registerUpdatePipeline();
     this.registerPatchPipeline();
     this.registerDeletePipeline();
   }
 
-  // ─── Public command API ──────────────────────────────────────────────────
+  // ─── Public command API ───────────────────────────────────────────────────
 
-  /** Triggers a (re)load of tasks from the API. */
-  loadTasks(params?: TaskQueryParams): void {
-    this.loadTasks$.next(params);
+  /**
+   * Manually triggers a fresh reload of the task list from the server.
+   * Useful after external changes (e.g. another user's edits).
+   */
+  reload(): void {
+    this._tasksResource.reload();
   }
 
-  /** Creates a new task; optimistically adds it after the API confirms. */
+  /** Dispatches a create-task mutation. */
   createTask(dto: CreateTaskDto): void {
     this.createTask$.next(dto);
   }
 
-  /** Fully replaces an existing task. */
+  /** Dispatches a full-replace (PUT) mutation. */
   updateTask(id: string, dto: CreateTaskDto): void {
     this.updateTask$.next({ id, dto });
   }
 
-  /** Partially updates an existing task. */
+  /** Dispatches a partial-update (PATCH) mutation. */
   patchTask(id: string, dto: UpdateTaskDto): void {
     this.patchTask$.next({ id, dto });
   }
 
-  /** Deletes a task by ID. */
+  /** Dispatches a delete mutation. */
   deleteTask(id: string): void {
     this.deleteTask$.next(id);
   }
 
-  /** Selects a task by ID (or clears selection when `null`). */
+  /** Selects a task by ID; pass `null` to clear the selection. */
   selectTask(id: string | null): void {
     this._selectedTaskId.set(id);
   }
 
-  /** Updates one or more filter fields. */
+  /** Merges `partial` into the current filter state. */
   setFilters(partial: Partial<TaskFilters>): void {
     this._filters.update((current) => ({ ...current, ...partial }));
   }
 
-  /** Resets all filters to their initial values. */
+  /** Resets all filters to their initial (show-everything) values. */
   resetFilters(): void {
     this._filters.set(INITIAL_TASK_FILTERS);
   }
 
-  /** Clears the current error state. */
-  clearError(): void {
-    this._error.set(null);
-  }
-
-  // ─── Private pipeline registrations ──────────────────────────────────────
-
   /**
-   * Load pipeline — uses `switchMap` so a new trigger cancels any in-flight request.
+   * Clears any mutation error.
+   * Resource errors clear automatically on the next successful load.
    */
-  private registerLoadPipeline(): void {
-    this.loadTasks$
-      .pipe(
-        tap(() => {
-          this._isLoading.set(true);
-          this._error.set(null);
-        }),
-        switchMap((params) => this.api.getTasks(params)),
-        takeUntilDestroyed(),
-      )
-      .subscribe({
-        next: (response) => {
-          this._tasks.set(response.tasks);
-          this._totalCount.set(response.meta.totalCount);
-          this._lastUpdated.set(response.meta.lastUpdated);
-          this._isLoading.set(false);
-        },
-        error: (err: Error) => {
-          this._error.set(err.message);
-          this._isLoading.set(false);
-        },
-      });
+  clearError(): void {
+    this._mutationError.set(null);
   }
 
+  // ─── Private mutation pipelines ───────────────────────────────────────────
+
   /**
-   * Create pipeline — uses `exhaustMap` to prevent duplicate submissions
-   * while a request is already in flight.
+   * `exhaustMap` — ignores duplicate create triggers while a request is in-flight.
+   * Reloads the task list from the server on success.
    */
   private registerCreatePipeline(): void {
     this.createTask$
       .pipe(
         tap(() => {
           this._isMutating.set(true);
-          this._error.set(null);
+          this._mutationError.set(null);
         }),
         exhaustMap((dto) => this.api.createTask(dto)),
         takeUntilDestroyed(),
       )
       .subscribe({
-        next: (task) => {
-          this._tasks.update((tasks) => [...tasks, task]);
-          this._totalCount.update((n) => n + 1);
+        next: () => {
+          this._tasksResource.reload();
           this._isMutating.set(false);
         },
         error: (err: Error) => {
-          this._error.set(err.message);
+          this._mutationError.set(err.message);
           this._isMutating.set(false);
         },
       });
   }
 
   /**
-   * Full-update (PUT) pipeline.
+   * `exhaustMap` — ignores duplicate update triggers while a request is in-flight.
+   * Reloads the task list and refreshes the selected-task detail on success.
    */
   private registerUpdatePipeline(): void {
     this.updateTask$
       .pipe(
         tap(() => {
           this._isMutating.set(true);
-          this._error.set(null);
+          this._mutationError.set(null);
         }),
         exhaustMap(({ id, dto }) => this.api.updateTask(id, dto)),
         takeUntilDestroyed(),
       )
       .subscribe({
-        next: (updated) => {
-          this._tasks.update((tasks) =>
-            tasks.map((t) => (t.id === updated.id ? updated : t)),
-          );
+        next: () => {
+          this._tasksResource.reload();
+          this._selectedTaskResource.reload();
           this._isMutating.set(false);
         },
         error: (err: Error) => {
-          this._error.set(err.message);
+          this._mutationError.set(err.message);
           this._isMutating.set(false);
         },
       });
   }
 
   /**
-   * Partial-update (PATCH) pipeline.
+   * `exhaustMap` — ignores duplicate patch triggers while a request is in-flight.
+   * Reloads the task list and refreshes the selected-task detail on success.
    */
   private registerPatchPipeline(): void {
     this.patchTask$
       .pipe(
         tap(() => {
           this._isMutating.set(true);
-          this._error.set(null);
+          this._mutationError.set(null);
         }),
         exhaustMap(({ id, dto }) => this.api.patchTask(id, dto)),
         takeUntilDestroyed(),
       )
       .subscribe({
-        next: (updated) => {
-          this._tasks.update((tasks) =>
-            tasks.map((t) => (t.id === updated.id ? updated : t)),
-          );
+        next: () => {
+          this._tasksResource.reload();
+          this._selectedTaskResource.reload();
           this._isMutating.set(false);
         },
         error: (err: Error) => {
-          this._error.set(err.message);
+          this._mutationError.set(err.message);
           this._isMutating.set(false);
         },
       });
   }
 
   /**
-   * Delete pipeline — optimistically removes the task from local state
-   * after the API confirms deletion.
+   * `exhaustMap` — ignores duplicate delete triggers while a request is in-flight.
+   * Clears the selection if the deleted task was selected, then reloads the list.
    */
   private registerDeletePipeline(): void {
     this.deleteTask$
       .pipe(
         tap(() => {
           this._isMutating.set(true);
-          this._error.set(null);
+          this._mutationError.set(null);
         }),
         exhaustMap((id) =>
           this.api.deleteTask(id).pipe(
-            // Carry the id forward so we know which task to remove
             tap(() => {
-              this._tasks.update((tasks) => tasks.filter((t) => t.id !== id));
-              this._totalCount.update((n) => Math.max(0, n - 1));
-              // Deselect if the deleted task was selected
               if (this._selectedTaskId() === id) {
                 this._selectedTaskId.set(null);
               }
@@ -342,10 +364,11 @@ export class TaskStore {
       )
       .subscribe({
         next: () => {
+          this._tasksResource.reload();
           this._isMutating.set(false);
         },
         error: (err: Error) => {
-          this._error.set(err.message);
+          this._mutationError.set(err.message);
           this._isMutating.set(false);
         },
       });

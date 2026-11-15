@@ -1,70 +1,25 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
 import { environment } from '@env';
 import { CreateTaskDto, UpdateTaskDto } from '@tasks/models/task.dto';
 import { Task } from '@tasks/models/task.model';
-import { TasksResponse } from '@tasks/models/tasks-response.model';
-
-export interface TaskQueryParams {
-  status?: string;
-  priority?: string;
-  assigneeId?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
 
 /**
- * Service responsible for all Task CRUD operations against the REST API.
+ * Service responsible for Task **mutation** operations (POST / PUT / PATCH / DELETE).
  *
+ * Reactive GET requests are handled via `httpResource` directly in `TaskStore`,
+ * keeping this service lean and focused on write operations only.
  *
- * Every request:
- *  - retries once on transient network failures
- *  - maps HTTP errors to a typed, human-readable `Error` via `handleError`
+ * Every mutation:
+ *  - Maps HTTP errors to a typed, human-readable `Error` via `handleError`
  */
 @Injectable({ providedIn: 'root' })
 export class TaskApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiBaseUrl}/tasks`;
-
-  // ─── Read ────────────────────────────────────────────────────────────────
-
-  /**
-   * Fetches a paginated, optionally filtered list of tasks.
-   *
-   * @param params - Optional query parameters (status, priority, assigneeId, search, page, limit).
-   * @returns Observable wrapping the full {@link TasksResponse} envelope.
-   */
-  getTasks(params?: TaskQueryParams): Observable<TasksResponse> {
-    let httpParams = new HttpParams();
-
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          httpParams = httpParams.set(key, String(value));
-        }
-      });
-    }
-
-    return this.http
-      .get<TasksResponse>(this.baseUrl, { params: httpParams })
-      .pipe(retry(1), catchError(this.handleError));
-  }
-
-  /**
-   * Fetches a single task by its ID.
-   *
-   * @param id - Unique task identifier.
-   * @returns Observable wrapping the matching {@link Task}.
-   */
-  getTaskById(id: string): Observable<Task> {
-    return this.http
-      .get<Task>(`${this.baseUrl}/${id}`)
-      .pipe(retry(1), catchError(this.handleError));
-  }
+  readonly baseUrl = `${environment.apiBaseUrl}/tasks`;
 
   // ─── Create ──────────────────────────────────────────────────────────────
 
@@ -72,7 +27,7 @@ export class TaskApiService {
    * Creates a new task.
    *
    * @param dto - Payload conforming to {@link CreateTaskDto}.
-   * @returns Observable wrapping the newly created {@link Task} (with server-assigned id/timestamps).
+   * @returns Observable wrapping the newly created {@link Task}.
    */
   createTask(dto: CreateTaskDto): Observable<Task> {
     return this.http
@@ -83,7 +38,7 @@ export class TaskApiService {
   // ─── Update ──────────────────────────────────────────────────────────────
 
   /**
-   * Fully replaces an existing task.
+   * Fully replaces an existing task (PUT semantics).
    *
    * @param id  - ID of the task to replace.
    * @param dto - Full task payload.
@@ -96,7 +51,7 @@ export class TaskApiService {
   }
 
   /**
-   * Partially updates an existing task (patch semantics).
+   * Partially updates an existing task (PATCH semantics).
    *
    * @param id  - ID of the task to patch.
    * @param dto - Partial task payload conforming to {@link UpdateTaskDto}.
@@ -131,17 +86,11 @@ export class TaskApiService {
    * - 4xx / 5xx responses             → message from the server body when available.
    */
   private handleError(error: HttpErrorResponse): Observable<never> {
-    let message: string;
-
-    if (error.status === 0) {
-      // Network error or CORS issue — the response body is a ProgressEvent
-      message = 'Unable to reach the server. Please check your connection.';
-    } else {
-      // Server returned a non-2xx status; prefer the server's own message
-      message =
-        (error.error as { message?: string } | null)?.message ??
-        `Server error ${error.status}: ${error.statusText}`;
-    }
+    const message =
+      error.status === 0
+        ? 'Unable to reach the server. Please check your connection.'
+        : ((error.error as { message?: string } | null)?.message ??
+          `Server error ${error.status}: ${error.statusText}`);
 
     return throwError(() => new Error(message));
   }

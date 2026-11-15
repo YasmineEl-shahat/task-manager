@@ -1,11 +1,16 @@
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it } from 'vitest';
 
+import { environment } from '@env';
 import { TaskPriority, TaskStatus, TaskFilterStatus, TaskFilterPriority } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
 import { TaskApiService } from '@tasks/services/task-api.service';
+import { TasksResponse } from '@tasks/models/tasks-response.model';
 import { TaskStore } from './task.store';
+
+const BASE_URL = `${environment.apiBaseUrl}/tasks`;
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -25,21 +30,25 @@ function makeTask(overrides: Partial<Task> = {}): Task {
   };
 }
 
-function makeApiMock() {
-  return {
-    getTasks: vi.fn(),
-    getTaskById: vi.fn(),
-    createTask: vi.fn(),
-    updateTask: vi.fn(),
-    patchTask: vi.fn(),
-    deleteTask: vi.fn(),
-  };
+function makeResponse(tasks: Task[]): TasksResponse {
+  return { tasks, meta: { totalCount: tasks.length, lastUpdated: '2026-01-01' } };
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Flush the micro-task queue so signal updates propagate. */
-function flushMicrotasks(): Promise<void> {
+/**
+ * Flushes the initial GET /tasks request that `httpResource` fires as soon as
+ * the store is created, then processes any pending signal effects.
+ */
+function flushTaskList(httpMock: HttpTestingController, tasks: Task[] = []): void {
+  TestBed.flushEffects(); // let httpResource schedule the request
+  const req = httpMock.expectOne((r) => r.url === BASE_URL && r.method === 'GET');
+  req.flush(makeResponse(tasks));
+  TestBed.flushEffects(); // propagate the response into signals
+}
+
+/** Waits one microtask tick so RxJS pipelines and signal writes settle. */
+function flush(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
@@ -47,36 +56,38 @@ function flushMicrotasks(): Promise<void> {
 
 describe('TaskStore', () => {
   let store: TaskStore;
-  let apiMock: ReturnType<typeof makeApiMock>;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    apiMock = makeApiMock();
-
     TestBed.configureTestingModule({
       providers: [
         TaskStore,
-        { provide: TaskApiService, useValue: apiMock },
+        TaskApiService,
+        provideHttpClient(withFetch()),
+        provideHttpClientTesting(),
       ],
     });
 
     store = TestBed.inject(TaskStore);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  // ─── Initial state ─────────────────────────────────────────────────────
+  afterEach(() => httpMock.verify());
+
+  // ─── Initial state ────────────────────────────────────────────────────────
 
   describe('initial state', () => {
-    it('starts with an empty task list', () => {
-      expect(store.tasks()).toEqual([]);
-    });
-
-    it('starts with no loading or mutation flags set', () => {
+    it('fires a GET request on creation and populates tasks', () => {
+      flushTaskList(httpMock, [makeTask()]);
+      expect(store.tasks()).toHaveLength(1);
       expect(store.isLoading()).toBe(false);
-      expect(store.isMutating()).toBe(false);
-      expect(store.isBusy()).toBe(false);
     });
 
-    it('starts with no error', () => {
-      expect(store.error()).toBeNull();
+    it('starts with an empty task list while loading', () => {
+      // Resource is loading; don't flush yet
+      expect(store.tasks()).toEqual([]);
+      expect(store.isLoading()).toBe(true);
+      flushTaskList(httpMock);
     });
 
     it('starts with default filters', () => {
@@ -84,304 +95,321 @@ describe('TaskStore', () => {
       expect(store.filters().priority).toBe(TaskFilterPriority.ALL);
       expect(store.filters().assigneeId).toBeNull();
       expect(store.filters().search).toBe('');
+      flushTaskList(httpMock);
     });
 
     it('starts with no selected task', () => {
       expect(store.selectedTask()).toBeNull();
       expect(store.selectedTaskId()).toBeNull();
+      flushTaskList(httpMock);
+    });
+
+    it('starts with no mutation error', () => {
+      expect(store.error()).toBeNull();
+      flushTaskList(httpMock);
     });
   });
 
-  // ─── loadTasks ─────────────────────────────────────────────────────────
+  // ─── httpResource — task list ─────────────────────────────────────────────
 
-  describe('loadTasks()', () => {
-    it('populates tasks from the API response', async () => {
-      const task = makeTask();
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [task], meta: { totalCount: 1, lastUpdated: '2026-01-01' } }),
-      );
+  describe('httpResource (task list)', () => {
+    it('populates tasks and meta from the API response', () => {
+      flushTaskList(httpMock, [makeTask()]);
 
-      store.loadTasks();
-      await flushMicrotasks();
-
-      expect(store.tasks()).toEqual([task]);
+      expect(store.tasks()).toHaveLength(1);
       expect(store.totalCount()).toBe(1);
       expect(store.lastUpdated()).toBe('2026-01-01');
-      expect(store.isLoading()).toBe(false);
     });
 
-    it('sets an error message when the API fails', async () => {
-      apiMock.getTasks.mockReturnValue(throwError(() => new Error('Network failure')));
+    it('re-fetches when filters change (passes only non-ALL params)', () => {
+      flushTaskList(httpMock);
 
-      store.loadTasks();
-      await flushMicrotasks();
+      store.setFilters({ status: TaskFilterStatus.DONE });
+      TestBed.flushEffects(); // let httpResource react to the signal change
 
-      expect(store.error()).toBe('Network failure');
-      expect(store.isLoading()).toBe(false);
-      expect(store.tasks()).toEqual([]);
+      // New request must include status=done
+      const req = httpMock.expectOne(
+        (r) => r.url === BASE_URL && r.params.get('status') === 'done',
+      );
+      req.flush(makeResponse([]));
+      TestBed.flushEffects();
+    });
+
+    it('does not send status/priority params when set to ALL', () => {
+      const req = httpMock.expectOne((r) => r.url === BASE_URL);
+      expect(req.request.params.has('status')).toBe(false);
+      expect(req.request.params.has('priority')).toBe(false);
+      req.flush(makeResponse([]));
+    });
+
+    it('surfaces the resource error message via error()', () => {
+      const req = httpMock.expectOne((r) => r.url === BASE_URL);
+      req.flush({ message: 'Internal Error' }, { status: 500, statusText: 'Server Error' });
+      TestBed.flushEffects();
+
+      expect(store.error()).toBeTruthy();
+    });
+
+    it('reload() triggers a fresh GET request', () => {
+      flushTaskList(httpMock);
+
+      store.reload();
+      flushTaskList(httpMock, [makeTask()]);
+
+      expect(store.tasks()).toHaveLength(1);
     });
   });
 
-  // ─── createTask ────────────────────────────────────────────────────────
+  // ─── httpResource — selected task ─────────────────────────────────────────
+
+  describe('httpResource (selected task)', () => {
+    it('fires GET /tasks/:id when a task is selected', () => {
+      flushTaskList(httpMock);
+
+      store.selectTask('task-1');
+      TestBed.flushEffects();
+
+      const req = httpMock.expectOne(`${BASE_URL}/task-1`);
+      expect(req.request.method).toBe('GET');
+      req.flush(makeTask());
+      TestBed.flushEffects();
+
+      expect(store.selectedTask()?.id).toBe('task-1');
+    });
+
+    it('clears selectedTask when selectTask(null) is called', () => {
+      flushTaskList(httpMock);
+
+      store.selectTask('task-1');
+      TestBed.flushEffects();
+      httpMock.expectOne(`${BASE_URL}/task-1`).flush(makeTask());
+
+      store.selectTask(null);
+      TestBed.flushEffects();
+
+      expect(store.selectedTask()).toBeNull();
+      expect(store.selectedTaskId()).toBeNull();
+    });
+  });
+
+  // ─── Mutations ────────────────────────────────────────────────────────────
 
   describe('createTask()', () => {
-    it('appends the new task returned by the API', async () => {
-      const created = makeTask({ id: 'task-new' });
-      apiMock.createTask.mockReturnValue(of(created));
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [makeTask()], meta: { totalCount: 1, lastUpdated: '' } }),
-      );
-
-      store.loadTasks();
-      await flushMicrotasks();
+    it('POSTs the DTO and reloads the task list', async () => {
+      flushTaskList(httpMock);
 
       store.createTask({
-        title: created.title,
-        description: created.description,
-        status: created.status,
-        priority: created.priority,
-        dueDate: created.dueDate,
-        assignee: created.assignee,
-        tags: created.tags,
-      });
-      await flushMicrotasks();
-
-      expect(store.tasks().find((t) => t.id === 'task-new')).toBeDefined();
-      expect(store.totalCount()).toBe(2);
-      expect(store.isMutating()).toBe(false);
-    });
-
-    it('sets an error when creation fails', async () => {
-      apiMock.createTask.mockReturnValue(throwError(() => new Error('Create failed')));
-
-      store.createTask({
-        title: 'x',
-        description: '',
-        status: TaskStatus.TODO,
-        priority: TaskPriority.LOW,
+        title: 'New', description: '', status: TaskStatus.TODO, priority: TaskPriority.LOW,
         dueDate: '2099-01-01',
-        assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'bob@test.com' },
+        assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'b@test.com' },
         tags: [],
       });
-      await flushMicrotasks();
 
-      expect(store.error()).toBe('Create failed');
+      await flush();
+
+      const post = httpMock.expectOne((r) => r.method === 'POST' && r.url === BASE_URL);
+      post.flush(makeTask({ id: 'task-new' }));
+
+      await flush();
+
+      // Store reloads after create
+      flushTaskList(httpMock, [makeTask(), makeTask({ id: 'task-new' })]);
+
+      expect(store.tasks()).toHaveLength(2);
+      expect(store.isMutating()).toBe(false);
+    });
+
+    it('sets mutation error when POST fails', async () => {
+      flushTaskList(httpMock);
+
+      store.createTask({
+        title: 'x', description: '', status: TaskStatus.TODO, priority: TaskPriority.LOW,
+        dueDate: '2099-01-01',
+        assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'b@test.com' },
+        tags: [],
+      });
+
+      await flush();
+
+      httpMock
+        .expectOne((r) => r.method === 'POST')
+        .flush({ message: 'Validation error' }, { status: 422, statusText: 'Unprocessable' });
+
+      await flush();
+
+      expect(store.error()).toBe('Validation error');
       expect(store.isMutating()).toBe(false);
     });
   });
 
-  // ─── updateTask ────────────────────────────────────────────────────────
-
   describe('updateTask()', () => {
-    it('replaces the task in the list with the API response', async () => {
-      const original = makeTask();
-      const updated = makeTask({ title: 'Updated title', status: TaskStatus.DONE });
+    it('PUTs to /tasks/:id and reloads', async () => {
+      flushTaskList(httpMock, [makeTask()]);
 
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [original], meta: { totalCount: 1, lastUpdated: '' } }),
-      );
-      apiMock.updateTask.mockReturnValue(of(updated));
+      store.updateTask('task-1', makeTask({ title: 'Updated' }) as never);
 
-      store.loadTasks();
-      await flushMicrotasks();
+      await flush();
 
-      store.updateTask(original.id, updated as never);
-      await flushMicrotasks();
+      httpMock
+        .expectOne((r) => r.method === 'PUT' && r.url === `${BASE_URL}/task-1`)
+        .flush(makeTask({ title: 'Updated' }));
 
-      expect(store.tasks()[0]?.title).toBe('Updated title');
-      expect(store.tasks()[0]?.status).toBe(TaskStatus.DONE);
+      await flush();
+
+      flushTaskList(httpMock, [makeTask({ title: 'Updated' })]);
+      expect(store.tasks()[0]?.title).toBe('Updated');
     });
   });
 
-  // ─── patchTask ─────────────────────────────────────────────────────────
-
   describe('patchTask()', () => {
-    it('merges the patched task into the list', async () => {
-      const original = makeTask();
-      const patched = makeTask({ status: TaskStatus.IN_PROGRESS });
+    it('PATCHes /tasks/:id and reloads', async () => {
+      flushTaskList(httpMock, [makeTask()]);
 
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [original], meta: { totalCount: 1, lastUpdated: '' } }),
-      );
-      apiMock.patchTask.mockReturnValue(of(patched));
+      store.patchTask('task-1', { status: TaskStatus.IN_PROGRESS });
 
-      store.loadTasks();
-      await flushMicrotasks();
+      await flush();
 
-      store.patchTask(original.id, { status: TaskStatus.IN_PROGRESS });
-      await flushMicrotasks();
+      httpMock
+        .expectOne((r) => r.method === 'PATCH' && r.url === `${BASE_URL}/task-1`)
+        .flush(makeTask({ status: TaskStatus.IN_PROGRESS }));
 
+      await flush();
+
+      flushTaskList(httpMock, [makeTask({ status: TaskStatus.IN_PROGRESS })]);
       expect(store.tasks()[0]?.status).toBe(TaskStatus.IN_PROGRESS);
     });
   });
 
-  // ─── deleteTask ────────────────────────────────────────────────────────
-
   describe('deleteTask()', () => {
-    it('removes the task from the list', async () => {
-      const task = makeTask();
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [task], meta: { totalCount: 1, lastUpdated: '' } }),
-      );
-      apiMock.deleteTask.mockReturnValue(of(void 0));
+    it('DELETEs /tasks/:id, clears selection, and reloads', async () => {
+      flushTaskList(httpMock, [makeTask()]);
 
-      store.loadTasks();
-      await flushMicrotasks();
+      store.selectTask('task-1');
+      TestBed.flushEffects();
+      httpMock.expectOne(`${BASE_URL}/task-1`).flush(makeTask());
 
-      store.deleteTask(task.id);
-      await flushMicrotasks();
+      store.deleteTask('task-1');
+
+      await flush();
+
+      httpMock
+        .expectOne((r) => r.method === 'DELETE' && r.url === `${BASE_URL}/task-1`)
+        .flush(null);
+
+      await flush();
+
+      flushTaskList(httpMock, []);
 
       expect(store.tasks()).toHaveLength(0);
-      expect(store.totalCount()).toBe(0);
-    });
-
-    it('clears the selection when the selected task is deleted', async () => {
-      const task = makeTask();
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [task], meta: { totalCount: 1, lastUpdated: '' } }),
-      );
-      apiMock.deleteTask.mockReturnValue(of(void 0));
-
-      store.loadTasks();
-      await flushMicrotasks();
-
-      store.selectTask(task.id);
-      expect(store.selectedTask()).toEqual(task);
-
-      store.deleteTask(task.id);
-      await flushMicrotasks();
-
-      expect(store.selectedTask()).toBeNull();
+      expect(store.selectedTaskId()).toBeNull();
     });
   });
 
-  // ─── selectTask ────────────────────────────────────────────────────────
-
-  describe('selectTask()', () => {
-    it('sets selectedTask to the matching task', async () => {
-      const task = makeTask();
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [task], meta: { totalCount: 1, lastUpdated: '' } }),
-      );
-
-      store.loadTasks();
-      await flushMicrotasks();
-
-      store.selectTask(task.id);
-      expect(store.selectedTask()).toEqual(task);
-    });
-
-    it('clears the selection when called with null', async () => {
-      const task = makeTask();
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [task], meta: { totalCount: 1, lastUpdated: '' } }),
-      );
-
-      store.loadTasks();
-      await flushMicrotasks();
-
-      store.selectTask(task.id);
-      store.selectTask(null);
-      expect(store.selectedTask()).toBeNull();
-    });
-  });
-
-  // ─── Filters ───────────────────────────────────────────────────────────
+  // ─── Filters ──────────────────────────────────────────────────────────────
 
   describe('setFilters() / resetFilters()', () => {
-    it('filters tasks by status', async () => {
-      const todo = makeTask({ id: '1', status: TaskStatus.TODO });
-      const done = makeTask({ id: '2', status: TaskStatus.DONE });
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [todo, done], meta: { totalCount: 2, lastUpdated: '' } }),
-      );
-
-      store.loadTasks();
-      await flushMicrotasks();
+    it('filters the client-side list by status', () => {
+      flushTaskList(httpMock, [
+        makeTask({ id: '1', status: TaskStatus.TODO }),
+        makeTask({ id: '2', status: TaskStatus.DONE }),
+      ]);
+      TestBed.flushEffects();
 
       store.setFilters({ status: TaskFilterStatus.DONE });
+      TestBed.flushEffects();
+
+      // Flush the re-fetch triggered by filter change
+      httpMock
+        .expectOne((r) => r.url === BASE_URL && r.params.get('status') === 'done')
+        .flush(makeResponse([makeTask({ id: '2', status: TaskStatus.DONE })]));
+      TestBed.flushEffects();
+
       expect(store.filteredTasks()).toHaveLength(1);
       expect(store.filteredTasks()[0]?.id).toBe('2');
     });
 
-    it('filters tasks by priority', async () => {
-      const high = makeTask({ id: '1', priority: TaskPriority.HIGH });
-      const low = makeTask({ id: '2', priority: TaskPriority.LOW });
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [high, low], meta: { totalCount: 2, lastUpdated: '' } }),
-      );
-
-      store.loadTasks();
-      await flushMicrotasks();
-
-      store.setFilters({ priority: TaskFilterPriority.HIGH });
-      expect(store.filteredTasks()).toHaveLength(1);
-      expect(store.filteredTasks()[0]?.id).toBe('1');
-    });
-
-    it('filters tasks by search query (title and description)', async () => {
-      const a = makeTask({ id: '1', title: 'Fix login bug', description: '' });
-      const b = makeTask({ id: '2', title: 'Write tests', description: 'cover login logic' });
-      const c = makeTask({ id: '3', title: 'Deploy to staging', description: '' });
-
-      apiMock.getTasks.mockReturnValue(
-        of({ tasks: [a, b, c], meta: { totalCount: 3, lastUpdated: '' } }),
-      );
-
-      store.loadTasks();
-      await flushMicrotasks();
+    it('filters by search query client-side', () => {
+      flushTaskList(httpMock, [
+        makeTask({ id: '1', title: 'Fix login bug' }),
+        makeTask({ id: '2', title: 'Write docs' }),
+      ]);
 
       store.setFilters({ search: 'login' });
-      expect(store.filteredTasks()).toHaveLength(2);
+      TestBed.flushEffects();
+
+      // Flush re-fetch (server also gets search param)
+      httpMock
+        .expectOne((r) => r.url === BASE_URL && r.params.get('search') === 'login')
+        .flush(makeResponse([makeTask({ id: '1', title: 'Fix login bug' })]));
+      TestBed.flushEffects();
+
+      expect(store.filteredTasks()).toHaveLength(1);
     });
 
-    it('resets all filters', async () => {
+    it('resetFilters() clears all active filters', () => {
+      flushTaskList(httpMock);
+
       store.setFilters({ status: TaskFilterStatus.DONE, search: 'test' });
+      TestBed.flushEffects();
+
+      // Flush the re-fetch after setFilters
+      httpMock.expectOne((r) => r.url === BASE_URL).flush(makeResponse([]));
+
       store.resetFilters();
+      TestBed.flushEffects();
+
+      // Another re-fetch after reset
+      httpMock.expectOne((r) => r.url === BASE_URL).flush(makeResponse([]));
 
       expect(store.filters().status).toBe(TaskFilterStatus.ALL);
       expect(store.filters().search).toBe('');
     });
   });
 
-  // ─── stats ─────────────────────────────────────────────────────────────
+  // ─── stats ────────────────────────────────────────────────────────────────
 
   describe('stats computed', () => {
-    it('computes correct aggregates', async () => {
+    it('computes correct aggregates', () => {
       const pastDate = '2000-01-01';
-      apiMock.getTasks.mockReturnValue(
-        of({
-          tasks: [
-            makeTask({ id: '1', status: TaskStatus.TODO, dueDate: pastDate }),
-            makeTask({ id: '2', status: TaskStatus.IN_PROGRESS, dueDate: '2099-01-01' }),
-            makeTask({ id: '3', status: TaskStatus.DONE, dueDate: pastDate }),
-          ],
-          meta: { totalCount: 3, lastUpdated: '' },
-        }),
-      );
-
-      store.loadTasks();
-      await flushMicrotasks();
+      flushTaskList(httpMock, [
+        makeTask({ id: '1', status: TaskStatus.TODO, dueDate: pastDate }),
+        makeTask({ id: '2', status: TaskStatus.IN_PROGRESS, dueDate: '2099-01-01' }),
+        makeTask({ id: '3', status: TaskStatus.DONE, dueDate: pastDate }),
+      ]);
+      TestBed.flushEffects();
 
       const s = store.stats();
       expect(s.total).toBe(3);
       expect(s.todo).toBe(1);
       expect(s.inProgress).toBe(1);
       expect(s.done).toBe(1);
-      // only the TODO task with past date is overdue (DONE is excluded)
-      expect(s.overdue).toBe(1);
+      expect(s.overdue).toBe(1); // only TODO with past date; DONE is excluded
     });
   });
 
-  // ─── clearError ────────────────────────────────────────────────────────
+  // ─── clearError ───────────────────────────────────────────────────────────
 
   describe('clearError()', () => {
-    it('resets the error signal to null', async () => {
-      apiMock.getTasks.mockReturnValue(throwError(() => new Error('oops')));
-      store.loadTasks();
-      await flushMicrotasks();
+    it('resets the mutation error to null', async () => {
+      flushTaskList(httpMock);
+
+      store.createTask({
+        title: 'x', description: '', status: TaskStatus.TODO, priority: TaskPriority.LOW,
+        dueDate: '2099-01-01',
+        assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'b@test.com' },
+        tags: [],
+      });
+
+      await flush();
+
+      httpMock
+        .expectOne((r) => r.method === 'POST')
+        .flush({ message: 'oops' }, { status: 500, statusText: 'Error' });
+
+      await flush();
 
       expect(store.error()).toBe('oops');
+
       store.clearError();
       expect(store.error()).toBeNull();
     });
