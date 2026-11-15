@@ -1,4 +1,4 @@
-import { TaskPriority, TaskStatus } from './task.enums';
+import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
 
 export interface Assignee {
   id: string;

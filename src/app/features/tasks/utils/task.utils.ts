@@ -1,5 +1,5 @@
-import { TaskStatus } from '../models/task.enums';
-import { Task } from '../models/task.model';
+import { TaskStatus } from '@tasks/models/task.enums';
+import { Task } from '@tasks/models/task.model';
 
 /**
  * Determines whether a task is overdue.

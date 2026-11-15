@@ -1,5 +1,5 @@
-import { TaskPriority, TaskStatus } from './task.enums';
-import { Assignee } from './task.model';
+import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
+import { Assignee } from '@tasks/models/task.model';
 
 export interface CreateTaskDto {
   title: string;

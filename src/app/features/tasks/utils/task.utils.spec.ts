@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { TaskPriority, TaskStatus } from '../models/task.enums';
-import { Task } from '../models/task.model';
-import { getDaysUntilDue, isTaskOverdue } from './task.utils';
+import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
+import { Task } from '@tasks/models/task.model';
+import { getDaysUntilDue, isTaskOverdue } from '@tasks/utils/task.utils';
 
 const today = new Date(2026, 10, 14);
 

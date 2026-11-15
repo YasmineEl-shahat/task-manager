@@ -1,4 +1,4 @@
-import { TaskFilterPriority, TaskFilterStatus } from './task.enums';
+import { TaskFilterPriority, TaskFilterStatus } from '@tasks/models/task.enums';
 
 export interface TaskFilters {
   status: TaskFilterStatus;
