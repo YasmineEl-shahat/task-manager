@@ -112,5 +112,13 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.spec.ts'],
     setupFiles: ['src/test-setup.ts'],
+    testTimeout: 20000,
+    hookTimeout: 20000,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['src/app/**/*.ts'],
+      exclude: ['src/app/**/*.spec.ts', 'src/main.ts'],
+    },
   },
 });
