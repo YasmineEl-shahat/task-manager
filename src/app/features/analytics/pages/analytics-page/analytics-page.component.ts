@@ -4,7 +4,6 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { DecimalPipe, PercentPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
 import { TaskStore } from '@tasks/store/task.store';
@@ -41,7 +40,7 @@ const CIRCUMFERENCE = 2 * Math.PI * 54;
   selector: 'app-analytics-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, PercentPipe, MatIconModule],
+  imports: [MatIconModule],
   templateUrl: './analytics-page.component.html',
   styleUrl: './analytics-page.component.scss',
 })

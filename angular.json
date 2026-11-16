@@ -4,6 +4,9 @@
   "cli": {
     "packageManager": "npm",
     "analytics": "beabe92f-29fe-4f5b-b38f-7319670abfbf",
+    "completion": {
+      "prompted": true
+    },
     "schematicCollections": [
       "angular-eslint"
     ]

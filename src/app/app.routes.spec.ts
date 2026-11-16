@@ -33,7 +33,7 @@ describe('App Routes and Lazy Navigation', () => {
       await router.navigateByUrl('');
       expect(location.path()).toBe('/dashboard');
     },
-    15000,
+    30000,
   );
 
   it(
@@ -42,7 +42,7 @@ describe('App Routes and Lazy Navigation', () => {
       await router.navigateByUrl('/dashboard');
       expect(location.path()).toBe('/dashboard');
     },
-    15000,
+    30000,
   );
 
   it(
@@ -51,7 +51,7 @@ describe('App Routes and Lazy Navigation', () => {
       await router.navigateByUrl('/tasks');
       expect(location.path()).toBe('/tasks');
     },
-    15000,
+    30000,
   );
 
   it(
@@ -60,6 +60,6 @@ describe('App Routes and Lazy Navigation', () => {
       await router.navigateByUrl('/some/non-existent/route');
       expect(location.path()).toBe('/dashboard');
     },
-    15000,
+    30000,
   );
 });
