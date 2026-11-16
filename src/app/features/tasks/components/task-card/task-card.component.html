@@ -1,0 +1,104 @@
+<div
+  class="task-card"
+  [class.overdue]="isOverdue()"
+  (click)="onCardClick()"
+  role="button"
+  [attr.aria-label]="'Task: ' + task().title"
+  tabindex="0"
+  (keydown.enter)="onCardClick()"
+  (keydown.space)="onCardClick()"
+>
+  <div class="card-header">
+    <div class="priority-wrapper">
+      <span
+        class="priority-badge"
+        [class]="'priority-' + task().priority"
+        [class.overdue-priority]="isOverdue()"
+      >
+        {{ priorityLabel() }}
+      </span>
+    </div>
+
+    <button
+      mat-icon-button
+      type="button"
+      class="more-menu-btn"
+      [matMenuTriggerFor]="taskMenu"
+      (click)="$event.stopPropagation()"
+      [attr.aria-label]="'Task options for ' + task().title"
+    >
+      <mat-icon class="more-icon">more_vert</mat-icon>
+    </button>
+  </div>
+
+  <div class="card-body">
+    <h3 class="task-title">{{ task().title }}</h3>
+
+    @if (task().description) {
+      <p class="task-description">{{ task().description }}</p>
+    }
+
+    <div class="card-metadata">
+      @if (dueStatusInfo(); as due) {
+        <div class="meta-row due-row" [class.overdue-meta]="due.isOverdue">
+          <mat-icon class="meta-icon">{{ due.icon }}</mat-icon>
+          <span>{{ due.text }}</span>
+        </div>
+      }
+
+      @if (tagText(); as tags) {
+        <div class="meta-row tag-row">
+          <span>{{ tags }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <hr class="card-divider" />
+
+  <div class="card-footer">
+    <div class="assignee-info">
+      <span class="avatar-circle" [title]="task().assignee.name">
+        {{ assigneeInitials() }}
+      </span>
+      <span class="assignee-name">{{ assigneeHandle() }}</span>
+    </div>
+  </div>
+
+  <!-- Screen reader / test-friendly action triggers -->
+  <div class="sr-only">
+    <button
+      type="button"
+      (click)="onEdit($event)"
+      [attr.aria-label]="'Edit task: ' + task().title"
+    >
+      Edit
+    </button>
+    <button
+      type="button"
+      (click)="onDelete($event)"
+      [attr.aria-label]="'Delete task: ' + task().title"
+    >
+      Delete
+    </button>
+  </div>
+
+  <mat-menu #taskMenu="matMenu" xPosition="before">
+    <button
+      mat-menu-item
+      (click)="onEdit($event)"
+      [attr.aria-label]="'Edit task: ' + task().title"
+    >
+      <mat-icon>edit</mat-icon>
+      <span>Edit</span>
+    </button>
+    <button
+      mat-menu-item
+      (click)="onDelete($event)"
+      [attr.aria-label]="'Delete task: ' + task().title"
+    >
+      <mat-icon color="warn">delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </mat-menu>
+</div>
