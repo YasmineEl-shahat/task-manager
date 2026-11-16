@@ -1,0 +1,36 @@
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md, 0.75rem);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md, 0.5rem);
+  background-color: var(--color-danger-bg, #ffebee);
+  color: var(--color-danger-text, #d32f2f);
+  border: 1px solid var(--color-danger-border, #d32f2f);
+}
+
+.error-icon {
+  flex-shrink: 0;
+  color: var(--color-danger-text, #d32f2f);
+}
+
+.error-message {
+  flex: 1;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.error-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+
+  button[mat-stroked-button] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-color: var(--color-danger-border, #d32f2f) !important;
+    color: var(--color-danger-text, #d32f2f) !important;
+  }
+}

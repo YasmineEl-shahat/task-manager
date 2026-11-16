@@ -1,0 +1,38 @@
+<div class="error-banner" role="alert" aria-live="assertive">
+  <mat-icon class="error-icon" aria-hidden="true">error_outline</mat-icon>
+
+  <span class="error-message">{{ message() }}</span>
+
+  <div class="error-actions">
+    @if (showRetry()) {
+      <button
+        mat-stroked-button
+        color="warn"
+        [disabled]="retrying()"
+        (click)="retry.emit()"
+        aria-label="Retry the failed request"
+      >
+        @if (retrying()) {
+          <ng-container>
+            <mat-icon>hourglass_empty</mat-icon>
+            <span>Retrying…</span>
+          </ng-container>
+        } @else {
+          <ng-container>
+            <mat-icon>refresh</mat-icon>
+            <span>Retry</span>
+          </ng-container>
+        }
+      </button>
+    }
+
+    <button
+      mat-icon-button
+      type="button"
+      (click)="dismiss.emit()"
+      aria-label="Dismiss error"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
