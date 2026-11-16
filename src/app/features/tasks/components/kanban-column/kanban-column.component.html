@@ -1,0 +1,22 @@
+<div class="kanban-column">
+  <div class="column-header">
+    <h3 class="column-title">{{ title() }}</h3>
+    <span class="column-badge">{{ count() }}</span>
+  </div>
+
+  <div class="column-cards">
+    @for (task of tasks(); track task.id) {
+      <app-task-card
+        [task]="task"
+        (selectTask)="selectTask.emit($event)"
+        (editTask)="editTask.emit($event)"
+        (deleteTask)="deleteTask.emit($event)"
+      />
+    } @empty {
+      <div class="column-empty">
+        <mat-icon class="empty-icon">{{ emptyIcon() }}</mat-icon>
+        <span>{{ emptyMessage() }}</span>
+      </div>
+    }
+  </div>
+</div>
