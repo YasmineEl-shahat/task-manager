@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  min-width: 20rem;
+  max-width: 28rem;
+}
+
+mat-dialog-content p {
+  color: var(--mat-sys-on-surface-variant, #49454f);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  margin: 0.5rem 0;
+}
