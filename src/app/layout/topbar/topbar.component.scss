@@ -1,9 +1,13 @@
 :host {
   display: block;
   width: 100%;
+  position: relative;
+  z-index: 10;
 }
 
 .app-topbar {
+  position: relative;
+  z-index: 10;
   height: 64px;
   background-color: var(--color-white-solid, #ffffff);
   box-shadow: var(--shadow-elevation, 0px 2px 4px 0px #00000014);
