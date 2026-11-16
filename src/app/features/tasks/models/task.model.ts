@@ -18,5 +18,6 @@ export interface Task {
   tags: string[];
   createdAt: string;
   updatedAt: string;
+  isOverdue?: boolean;
   completedAt?: string;
 }

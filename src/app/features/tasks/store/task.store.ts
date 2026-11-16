@@ -97,17 +97,28 @@ export class TaskStore {
   // ─── Public derived signals ───────────────────────────────────────────────
 
   /** Raw task list from the server (empty array while loading). */
-  readonly tasks = computed(() => this._tasksResource.value()?.tasks ?? []);
+  readonly tasks = computed<Task[]>(() => {
+    const raw = this._tasksResource.value();
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw;
+    if ('tasks' in raw && Array.isArray(raw.tasks)) return raw.tasks;
+    return [];
+  });
 
-  /** Total count from the server-side pagination meta. */
-  readonly totalCount = computed(
-    () => this._tasksResource.value()?.meta.totalCount ?? 0,
-  );
+  /** Total count from the server-side pagination meta or task list length. */
+  readonly totalCount = computed(() => {
+    const raw = this._tasksResource.value();
+    if (!raw) return 0;
+    if (Array.isArray(raw)) return raw.length;
+    return raw.meta?.totalCount ?? raw.tasks?.length ?? 0;
+  });
 
   /** ISO timestamp of the last server update from meta. */
-  readonly lastUpdated = computed(
-    () => this._tasksResource.value()?.meta.lastUpdated ?? null,
-  );
+  readonly lastUpdated = computed(() => {
+    const raw = this._tasksResource.value();
+    if (!raw || Array.isArray(raw)) return null;
+    return raw.meta?.lastUpdated ?? null;
+  });
 
   /** `true` while the task list is being (re)fetched. */
   readonly isLoading = this._tasksResource.isLoading;
@@ -151,7 +162,7 @@ export class TaskStore {
    * and as a safety net for any stale data.
    */
   readonly filteredTasks = computed(() => {
-    const tasks = this._tasksResource.value()?.tasks ?? [];
+    const tasks = this.tasks();
     const { status, priority, assigneeId, search } = this._filters();
     const query = search.trim().toLowerCase();
 
@@ -178,7 +189,7 @@ export class TaskStore {
 
   /** Aggregate statistics derived from the full task list. */
   readonly stats = computed(() => {
-    const tasks = this._tasksResource.value()?.tasks ?? [];
+    const tasks = this.tasks();
     const now = new Date();
 
     return {
@@ -188,6 +199,7 @@ export class TaskStore {
       done: tasks.filter((t) => t.status === 'done').length,
       overdue: tasks.filter((t) => {
         if (t.status === 'done') return false;
+        if (t.isOverdue !== undefined) return t.isOverdue;
         const due = new Date(`${t.dueDate}T00:00:00`);
         return !Number.isNaN(due.getTime()) && due < now;
       }).length,

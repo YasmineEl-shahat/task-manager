@@ -99,6 +99,22 @@ describe('TaskStore', () => {
       expect(store.isLoading()).toBe(false);
     });
 
+    it('handles direct Task[] array response from backend', async () => {
+      const rawTasks = [makeTask({ id: 'task-001' }), makeTask({ id: 'task-002' })];
+      TestBed.flushEffects();
+      await drainMicrotasks();
+
+      const req = httpMock.expectOne((r) => r.url.endsWith('/tasks') && r.method === 'GET');
+      req.flush(rawTasks);
+
+      TestBed.flushEffects();
+      await drainMicrotasks();
+
+      expect(store.tasks()).toHaveLength(2);
+      expect(store.totalCount()).toBe(2);
+      expect(store.filteredTasks()).toHaveLength(2);
+    });
+
     it('starts with an empty task list while loading', async () => {
       // Resource is loading; don't flush yet
       expect(store.tasks()).toEqual([]);
