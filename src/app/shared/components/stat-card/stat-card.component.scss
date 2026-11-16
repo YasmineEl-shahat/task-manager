@@ -1,0 +1,99 @@
+:host {
+  display: block;
+}
+
+.stat-card {
+  background: var(--color-white-solid, #ffffff);
+  border: none;
+  border-radius: var(--radius-md, 8px) !important;
+  padding: var(--spacing-2xl, 1.5rem);
+  box-shadow: var(--shadow-card, 0px 4px 8px 0px #0000001f);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  height: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover, 0 4px 12px rgba(0, 0, 0, 0.08));
+  }
+
+  mat-card-header {
+    padding: 0;
+  }
+
+  mat-card-content {
+    padding: 0;
+  }
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 0.5rem);
+}
+
+.stat-title {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-text-secondary, #757575);
+}
+
+.stat-icon {
+  font-size: 1.125rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &.total-icon {
+    color: var(--color-primary-600, #1976d2);
+  }
+
+  &.completed-icon {
+    color: var(--color-success-text, #388e3c);
+  }
+
+  &.inprogress-icon {
+    color: var(--color-primary-600, #1976d2);
+  }
+
+  &.overdue-icon {
+    color: var(--color-danger-text, #d32f2f);
+  }
+}
+
+.stat-value {
+  font-size: var(--font-size-3xl, 1.75rem);
+  font-weight: 700;
+  color: var(--color-text-primary, #212121);
+  line-height: 1.2;
+  margin-top: var(--spacing-lg, 1rem);
+}
+
+.stat-trend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  font-size: var(--font-size-2xs, 0.625rem);
+
+  &.trend-positive {
+    color: var(--color-success-text, #388e3c);
+  }
+
+  &.trend-negative {
+    color: var(--color-danger-text, #d32f2f);
+  }
+
+  &.trend-neutral {
+    color: var(--color-text-secondary, #757575);
+  }
+
+  .trend-icon {
+    font-size: 0.875rem;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}

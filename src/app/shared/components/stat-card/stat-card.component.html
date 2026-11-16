@@ -1,0 +1,22 @@
+<mat-card class="stat-card">
+  <mat-card-header>
+    <div class="stat-header">
+      @if (icon()) {
+        <mat-icon class="stat-icon" [class]="iconClass()">{{ icon() }}</mat-icon>
+      }
+      <span class="stat-title">{{ title() }}</span>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="stat-value">{{ value() }}</div>
+    @if (trend()) {
+      <div class="stat-trend" [class]="'trend-' + trendType()">
+        @if (trendIcon()) {
+          <mat-icon class="trend-icon">{{ trendIcon() }}</mat-icon>
+        }
+        <span>{{ trend() }}</span>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
