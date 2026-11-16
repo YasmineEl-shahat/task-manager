@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.app-sidebar {
+  width: var(--layout-sidebar-width, 14rem);
+  height: 100%;
+  background-color: var(--color-bg-sidebar, #ffffff);
+  box-shadow: var(--shadow-elevation, 0px 2px 4px 0px #00000014);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4, 1rem) var(--space-3, 0.75rem);
+  box-sizing: border-box;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 0.25rem);
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 2.8rem;
+  padding: 0 var(--spacing-lg, 1rem);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--color-text-primary, #212121);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base, 14px);
+  font-weight: var(--font-weight-regular, 400);
+  text-decoration: none;
+  justify-content: flex-start;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background-color: var(--color-primary-50, #e3f2fd);
+    color: var(--color-primary-600, #1976d2);
+  }
+
+  &.active {
+    background-color: var(--color-primary-600, #1976d2);
+    color: #ffffff;
+    font-weight: var(--font-weight-semibold, 600);
+
+    .nav-icon {
+      color: #ffffff !important;
+    }
+  }
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: inherit;
+  flex-shrink: 0;
+
+  &.check-icon {
+    color: var(--color-success-text, #388e3c);
+  }
+
+  &.calendar-icon {
+    color: #e57373;
+  }
+
+  &.analytics-icon {
+    color: #ba68c8;
+  }
+
+  &.team-icon {
+    color: #4db6ac;
+  }
+
+  &.settings-icon {
+    color: var(--color-text-muted, #9e9e9e);
+  }
+}
+
+.nav-label {
+  flex: 1;
+  text-align: left;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: var(--spacing-md, 0.75rem);
+}
+
+.new-task-btn {
+  width: 100%;
+  height: 2rem;
+  border-radius: var(--radius-xs, 4px);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm, 0.8125rem);
+  font-weight: var(--font-weight-medium, 500);
+  background-color: var(--color-primary-600, #1976d2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs, 0.25rem);
+
+  &:hover {
+    background-color: var(--color-primary-700, #1565c0);
+  }
+}

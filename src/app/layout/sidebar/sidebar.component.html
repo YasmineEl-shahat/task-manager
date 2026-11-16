@@ -1,0 +1,29 @@
+<aside class="app-sidebar" aria-label="Main Navigation">
+  <nav class="sidebar-nav">
+    @for (item of navItems(); track item.path) {
+      <a
+        mat-button
+        class="nav-item"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+      >
+        <mat-icon class="nav-icon" [class]="item.iconClass ?? ''">{{ item.icon }}</mat-icon>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <button
+      mat-flat-button
+      color="primary"
+      class="new-task-btn"
+      type="button"
+      (click)="createNewTask.emit()"
+      aria-label="Create new task"
+    >
+      + New Task
+    </button>
+  </div>
+</aside>
