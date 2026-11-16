@@ -13,6 +13,14 @@ import { SkeletonCardComponent } from '@shared/components';
 
 export type KanbanColumnTab = 'all' | 'todo' | 'in_progress' | 'done';
 
+export interface KanbanColumnConfig {
+  readonly id: Exclude<KanbanColumnTab, 'all'>;
+  readonly title: string;
+  readonly tasks: readonly Task[];
+  readonly emptyMessage: string;
+  readonly emptyIcon: string;
+}
+
 /**
  * Kanban Board Component.
  * Orchestrates 3 Kanban columns (TO DO, IN PROGRESS, DONE)
@@ -46,4 +54,34 @@ export class KanbanBoardComponent {
   readonly doneTasks = computed(() =>
     this.tasks().filter((t) => t.status === TaskStatus.DONE),
   );
+
+  readonly columns = computed<readonly KanbanColumnConfig[]>(() => [
+    {
+      id: 'todo',
+      title: 'TO DO',
+      tasks: this.todoTasks(),
+      emptyMessage: 'No tasks to do',
+      emptyIcon: 'inbox',
+    },
+    {
+      id: 'in_progress',
+      title: 'IN PROGRESS',
+      tasks: this.inProgressTasks(),
+      emptyMessage: 'No tasks in progress',
+      emptyIcon: 'inbox',
+    },
+    {
+      id: 'done',
+      title: 'DONE',
+      tasks: this.doneTasks(),
+      emptyMessage: 'No completed tasks',
+      emptyIcon: 'check_circle_outline',
+    },
+  ]);
+
+  readonly visibleColumns = computed<readonly KanbanColumnConfig[]>(() => {
+    const tab = this.selectedTab();
+    const cols = this.columns();
+    return tab === 'all' ? cols : cols.filter((col) => col.id === tab);
+  });
 }

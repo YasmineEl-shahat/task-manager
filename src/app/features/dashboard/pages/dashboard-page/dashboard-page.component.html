@@ -1,0 +1,83 @@
+<div class="dashboard-page">
+  <!-- ── 1. Statistics Cards Grid ─────────────────────────────────────────── -->
+  <section class="stats-grid" aria-label="Task Statistics">
+    @for (card of statCards(); track card.title) {
+      <app-stat-card
+        [title]="card.title"
+        [value]="card.value"
+        [icon]="card.icon"
+        [iconClass]="card.iconClass"
+        [trend]="card.trend"
+        [trendType]="card.trendType"
+        [trendIcon]="card.trendIcon"
+      />
+    }
+  </section>
+
+  <!-- ── 2. Error Banner (if error occurred) ─────────────────────────────── -->
+  @if (store.error()) {
+    <div class="error-container">
+      <app-error-banner
+        [message]="store.error()!"
+        [retrying]="store.isLoading()"
+        (retry)="store.retryLoad()"
+        (dismiss)="store.clearError()"
+      />
+    </div>
+  }
+
+  <!-- ── 3. Filter Bar & Actions ─────────────────────────────────────────── -->
+  <section class="action-bar" aria-label="Filters and Actions">
+    <div class="status-tabs" role="tablist">
+      @for (tab of statusTabs; track tab.id) {
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="selectedTab() === tab.id"
+          (click)="onTabSelect(tab.id)"
+          role="tab"
+          [attr.aria-selected]="selectedTab() === tab.id"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <div class="right-actions">
+      <!-- Priority Filter Menu -->
+      <mat-form-field appearance="outline" class="priority-select" subscriptSizing="dynamic">
+        <mat-label>Priority</mat-label>
+        <mat-select
+          [value]="store.filters().priority"
+          (selectionChange)="onPriorityChange($event.value)"
+        >
+          @for (option of priorityOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- + New Task Button -->
+      <button
+        mat-flat-button
+        color="primary"
+        class="add-task-btn"
+        type="button"
+        (click)="openCreateModal()"
+        aria-label="Create New Task"
+      >
+        <span>+ New Task</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── 4. Kanban Board ────────────────────────────────────────────────── -->
+  <app-kanban-board
+    [tasks]="store.filteredTasks()"
+    [selectedTab]="selectedTab()"
+    [isLoading]="store.isLoading() && !store.error()"
+    (selectTask)="onTaskSelect($event)"
+    (editTask)="onTaskEdit($event)"
+    (deleteTask)="onTaskDelete($event)"
+  />
+</div>

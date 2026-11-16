@@ -4,39 +4,12 @@
   </div>
 } @else {
   <section class="kanban-board" aria-label="Kanban Task Board">
-    <!-- TO DO Column -->
-    @if (selectedTab() === 'all' || selectedTab() === 'todo') {
+    @for (column of visibleColumns(); track column.id) {
       <app-kanban-column
-        title="TO DO"
-        [tasks]="todoTasks()"
-        emptyMessage="No tasks to do"
-        emptyIcon="inbox"
-        (selectTask)="selectTask.emit($event)"
-        (editTask)="editTask.emit($event)"
-        (deleteTask)="deleteTask.emit($event)"
-      />
-    }
-
-    <!-- IN PROGRESS Column -->
-    @if (selectedTab() === 'all' || selectedTab() === 'in_progress') {
-      <app-kanban-column
-        title="IN PROGRESS"
-        [tasks]="inProgressTasks()"
-        emptyMessage="No tasks in progress"
-        emptyIcon="inbox"
-        (selectTask)="selectTask.emit($event)"
-        (editTask)="editTask.emit($event)"
-        (deleteTask)="deleteTask.emit($event)"
-      />
-    }
-
-    <!-- DONE Column -->
-    @if (selectedTab() === 'all' || selectedTab() === 'done') {
-      <app-kanban-column
-        title="DONE"
-        [tasks]="doneTasks()"
-        emptyMessage="No completed tasks"
-        emptyIcon="check_circle_outline"
+        [title]="column.title"
+        [tasks]="column.tasks"
+        [emptyMessage]="column.emptyMessage"
+        [emptyIcon]="column.emptyIcon"
         (selectTask)="selectTask.emit($event)"
         (editTask)="editTask.emit($event)"
         (deleteTask)="deleteTask.emit($event)"
