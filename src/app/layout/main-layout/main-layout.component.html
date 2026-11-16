@@ -1,0 +1,11 @@
+<div class="layout-container">
+  <app-topbar (searchChange)="onGlobalSearch($event)" />
+
+  <div class="layout-body">
+    <app-sidebar class="layout-sidebar" (createNewTask)="openCreateTaskModal()" />
+
+    <main class="layout-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
