@@ -55,6 +55,11 @@ export class TaskStore {
   /** Error from the last failed mutation (not from the resource). */
   private readonly _mutationError = signal<string | null>(null);
 
+  /** Incremented each time the user manually retries a failed load. */
+  private readonly _retryCount = signal(0);
+  /** Number of manual retries the user has attempted for the current error. */
+  readonly retryCount = this._retryCount.asReadonly();
+
   // ─── httpResource — task list ─────────────────────────────────────────────
 
   /**
@@ -212,6 +217,17 @@ export class TaskStore {
    * Useful after external changes (e.g. another user's edits).
    */
   reload(): void {
+    this._tasksResource.reload();
+  }
+
+  /**
+   * Retries the last failed resource load.
+   * Increments `retryCount` so the template can show retry progress
+   * and clears any stale mutation error before reloading.
+   */
+  retryLoad(): void {
+    this._retryCount.update((n) => n + 1);
+    this._mutationError.set(null);
     this._tasksResource.reload();
   }
 
