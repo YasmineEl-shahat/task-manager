@@ -1,0 +1,124 @@
+<div class="analytics-page">
+
+  @if (allTasks().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">bar_chart</mat-icon>
+      <p>No task data to display yet.</p>
+    </div>
+  } @else {
+
+    <!-- Summary Cards -->
+    <section class="summary-cards">
+      @for (card of summaryCards(); track card.label) {
+        <div class="summary-card">
+          <div class="summary-icon" [style.background]="card.bgColor">
+            <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
+          </div>
+          <div class="summary-info">
+            <span class="summary-value">{{ card.value }}</span>
+            <span class="summary-label">{{ card.label }}</span>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Donut Charts Row -->
+    <section class="charts-row">
+
+      <!-- Status Distribution -->
+      <div class="chart-card">
+        <h3 class="chart-title">Status Distribution</h3>
+        <div class="donut-wrapper">
+          <svg viewBox="0 0 120 120" width="160" height="160">
+            <!-- Background track -->
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#f5f5f5" stroke-width="12"/>
+            <!-- Segments -->
+            @for (seg of statusSegments(); track seg.label) {
+              <circle
+                cx="60" cy="60" r="54"
+                fill="none"
+                stroke-width="12"
+                [attr.stroke]="seg.color"
+                [attr.stroke-dasharray]="seg.percentage * CIRCUMFERENCE + ' ' + CIRCUMFERENCE"
+                [attr.stroke-dashoffset]="-seg.offset"
+                transform="rotate(-90 60 60)"
+              />
+            }
+          </svg>
+        </div>
+        <div class="legend">
+          @for (seg of statusSegments(); track seg.label) {
+            <div class="legend-item">
+              <span class="legend-dot" [style.background]="seg.color"></span>
+              <span class="legend-text">{{ seg.label }}</span>
+              <span class="legend-count">{{ seg.value }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Priority Distribution -->
+      <div class="chart-card">
+        <h3 class="chart-title">Priority Distribution</h3>
+        <div class="donut-wrapper">
+          <svg viewBox="0 0 120 120" width="160" height="160">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#f5f5f5" stroke-width="12"/>
+            @for (seg of prioritySegments(); track seg.label) {
+              <circle
+                cx="60" cy="60" r="54"
+                fill="none"
+                stroke-width="12"
+                [attr.stroke]="seg.color"
+                [attr.stroke-dasharray]="seg.percentage * CIRCUMFERENCE + ' ' + CIRCUMFERENCE"
+                [attr.stroke-dashoffset]="-seg.offset"
+                transform="rotate(-90 60 60)"
+              />
+            }
+          </svg>
+        </div>
+        <div class="legend">
+          @for (seg of prioritySegments(); track seg.label) {
+            <div class="legend-item">
+              <span class="legend-dot" [style.background]="seg.color"></span>
+              <span class="legend-text">{{ seg.label }}</span>
+              <span class="legend-count">{{ seg.value }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Tasks by Assignee (Horizontal bars) -->
+    <div class="chart-card bar-chart-card">
+      <h3 class="chart-title">Tasks by Assignee</h3>
+      @for (entry of assigneeBarEntries(); track entry.label) {
+        <div class="assignee-bar-row">
+          <span class="bar-label">{{ entry.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="entry.percentage * 100" [style.background]="entry.color"></div>
+          </div>
+          <span class="bar-value">{{ entry.value }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- Tasks Completed Last 7 Days (Vertical bars) -->
+    <div class="chart-card weekly-chart-card">
+      <h3 class="chart-title">Tasks Completed — Last 7 Days</h3>
+      <div class="weekly-bars">
+        @for (entry of weeklyBarEntries(); track entry.label) {
+          <div class="weekly-bar-col">
+            <div
+              class="weekly-bar"
+              [style.height.%]="entry.percentage * 100"
+              [style.background]="entry.color"
+            ></div>
+            <span class="weekly-label">{{ entry.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+  }
+</div>

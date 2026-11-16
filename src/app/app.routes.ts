@@ -34,8 +34,8 @@ export const routes: Routes = [
     path: 'analytics',
     loadComponent: () =>
       import(
-        '@features/dashboard/pages/dashboard-page/dashboard-page.component'
-      ).then((m) => m.DashboardPageComponent),
+        '@features/analytics/pages/analytics-page/analytics-page.component'
+      ).then((m) => m.AnalyticsPageComponent),
     title: 'Analytics | Task Manager',
   },
   {
