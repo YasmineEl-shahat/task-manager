@@ -23,7 +23,8 @@
       "@features/*": ["./src/app/features/*"],
       "@tasks/*": ["./src/app/features/tasks/*"],
       "@dashboard/*": ["./src/app/features/dashboard/*"],
-      "@env": ["./src/environments/environment.ts"]
+      "@env": ["./src/environments/environment.ts"],
+      "@shared/*": ["./src/app/shared/*"]
     }
   },
   "angularCompilerOptions": {
