@@ -95,5 +95,6 @@
     (selectTask)="onTaskSelect($event)"
     (editTask)="onTaskEdit($event)"
     (deleteTask)="onTaskDelete($event)"
+    (taskDrop)="store.moveTask($event.taskId, $event.status, $event.orderedTaskIds)"
   />
 </div>

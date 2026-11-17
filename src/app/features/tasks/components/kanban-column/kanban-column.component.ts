@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Task } from '@tasks/models/task.model';
@@ -13,19 +14,24 @@ import { TaskCardComponent } from '../task-card/task-card.component';
   selector: 'app-kanban-column',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, TaskCardComponent],
+  imports: [MatIconModule, TaskCardComponent, CdkDrag, CdkDragHandle, CdkDropList],
   templateUrl: './kanban-column.component.html',
   styleUrl: './kanban-column.component.scss',
 })
 export class KanbanColumnComponent {
   readonly title = input.required<string>();
-  readonly tasks = input<readonly Task[]>([]);
+  readonly tasks = input<Task[]>([]);
   readonly emptyMessage = input<string>('No tasks');
   readonly emptyIcon = input<string>('inbox');
 
   readonly selectTask = output<string>();
   readonly editTask = output<Task>();
   readonly deleteTask = output<string>();
+  readonly taskDrop = output<CdkDragDrop<Task[]>>();
 
   readonly count = computed(() => this.tasks().length);
+
+  onDrop(event: CdkDragDrop<Task[]>): void {
+    this.taskDrop.emit(event);
+  }
 }

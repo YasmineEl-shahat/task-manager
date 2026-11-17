@@ -1,8 +1,8 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
-import { Subject } from 'rxjs';
-import { exhaustMap, tap } from 'rxjs/operators';
+import { EMPTY, Subject } from 'rxjs';
+import { catchError, concatMap, exhaustMap, finalize, tap } from 'rxjs/operators';
 
 import { environment } from '@env';
 import { CreateTaskDto, UpdateTaskDto } from '@tasks/models/task.dto';
@@ -57,6 +57,10 @@ export class TaskStore {
 
   private readonly _isMutating = signal(false);
   readonly isMutating = this._isMutating.asReadonly();
+  private readonly _taskOrder = signal<readonly string[]>([]);
+  private readonly _taskStatusOverrides = signal<Readonly<Record<string, TaskStatus>>>({});
+  private readonly moveVersions = new Map<string, number>();
+  private pendingMoves = 0;
 
   /** Error from the last failed mutation (not from the resource). */
   private readonly _mutationError = signal<string | null>(null);
@@ -129,9 +133,23 @@ export class TaskStore {
   readonly tasks = computed<Task[]>(() => {
     const raw = this._tasksResource.value();
     if (!raw) return [];
-    if (Array.isArray(raw)) return raw;
-    if ('tasks' in raw && Array.isArray(raw.tasks)) return raw.tasks;
-    return [];
+    const tasks = Array.isArray(raw)
+      ? raw
+      : 'tasks' in raw && Array.isArray(raw.tasks)
+        ? raw.tasks
+        : [];
+    const overrides = this._taskStatusOverrides();
+    const order = new Map(this._taskOrder().map((id, index) => [id, index]));
+    return tasks
+      .map((task) => {
+        const status = overrides[task.id];
+        return status ? { ...task, status } : task;
+      })
+      .sort(
+        (a, b) =>
+          (order.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+          (order.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+      );
   });
 
   /** Total count from the server-side pagination meta or task list length. */
@@ -235,6 +253,11 @@ export class TaskStore {
   private readonly updateTask$ = new Subject<{ id: string; dto: CreateTaskDto }>();
   private readonly patchTask$ = new Subject<{ id: string; dto: UpdateTaskDto }>();
   private readonly deleteTask$ = new Subject<string>();
+  private readonly moveTask$ = new Subject<{
+    id: string;
+    status: TaskStatus;
+    previousStatus: TaskStatus;
+  }>();
 
   // ─── Constructor — wire up mutation pipelines ─────────────────────────────
 
@@ -243,6 +266,7 @@ export class TaskStore {
     this.registerUpdatePipeline();
     this.registerPatchPipeline();
     this.registerDeletePipeline();
+    this.registerMoveTaskPipeline();
   }
 
   // ─── Public command API ───────────────────────────────────────────────────
@@ -284,6 +308,26 @@ export class TaskStore {
   /** Dispatches a delete mutation. */
   deleteTask(id: string): void {
     this.deleteTask$.next(id);
+  }
+
+  /** Reorders visible tasks immediately and persists status changes in sequence. */
+  moveTask(id: string, status: TaskStatus, orderedTaskIds: readonly string[]): void {
+    const existingIds = this._taskOrder();
+    this._taskOrder.set([
+      ...orderedTaskIds,
+      ...existingIds.filter((taskId) => !orderedTaskIds.includes(taskId)),
+    ]);
+
+    const task = this.tasks().find((item) => item.id === id);
+    if (!task || task.status === status) return;
+
+    const version = (this.moveVersions.get(id) ?? 0) + 1;
+    this.moveVersions.set(id, version);
+    this._taskStatusOverrides.update((current) => ({ ...current, [id]: status }));
+    this._mutationError.set(null);
+    this.pendingMoves += 1;
+    this._isMutating.set(true);
+    this.moveTask$.next({ id, status, previousStatus: task.status });
   }
 
   /** Selects a task by ID; pass `null` to clear the selection. */
@@ -595,5 +639,63 @@ export class TaskStore {
           this._isMutating.set(false);
         },
       });
+  }
+
+  private registerMoveTaskPipeline(): void {
+    this.moveTask$
+      .pipe(
+        concatMap(({ id, status, previousStatus }) => {
+          const task = this.tasks().find((item) => item.id === id);
+          const version = this.moveVersions.get(id);
+          if (!task) return EMPTY;
+
+          return this.api.patchTask(id, { status }).pipe(
+            tap((updated) => {
+              const isLatestMove = this.moveVersions.get(id) === version;
+              if (isLatestMove) {
+                this.clearTaskStatusOverride(id);
+                this._tasksResource.reload();
+                this._selectedTaskResource.reload();
+              }
+              const title = updated?.title ?? task.title;
+              const statusLabel =
+                status === TaskStatus.DONE
+                  ? 'Done'
+                  : status === TaskStatus.IN_PROGRESS
+                    ? 'In Progress'
+                    : 'To Do';
+              this.logActivity(
+                ActivityAction.STATUS_CHANGED,
+                id,
+                title,
+                `Changed status to ${statusLabel} for "${title}"`,
+                updated?.assignee?.name ?? 'John Doe',
+              );
+            }),
+            catchError((error: Error) => {
+              if (this.moveVersions.get(id) === version) {
+                this._taskStatusOverrides.update((current) => ({
+                  ...current,
+                  [id]: previousStatus,
+                }));
+              }
+              this._mutationError.set(error.message);
+              return EMPTY;
+            }),
+            finalize(() => {
+              this.pendingMoves -= 1;
+              this._isMutating.set(this.pendingMoves > 0);
+            }),
+          );
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe();
+  }
+
+  private clearTaskStatusOverride(id: string): void {
+    this._taskStatusOverrides.update((current) =>
+      Object.fromEntries(Object.entries(current).filter(([taskId]) => taskId !== id)),
+    );
   }
 }

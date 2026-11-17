@@ -3,7 +3,7 @@
     <app-skeleton-card [count]="6" />
   </div>
 } @else {
-  <section class="kanban-board" aria-label="Kanban Task Board">
+  <section class="kanban-board" aria-label="Kanban Task Board" cdkDropListGroup>
     @for (column of visibleColumns(); track column.id) {
       <app-kanban-column
         [title]="column.title"
@@ -13,6 +13,7 @@
         (selectTask)="selectTask.emit($event)"
         (editTask)="editTask.emit($event)"
         (deleteTask)="deleteTask.emit($event)"
+        (taskDrop)="onTaskDrop(column.status, $event)"
       />
     }
   </section>

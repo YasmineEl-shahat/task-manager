@@ -44,6 +44,42 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3, 0.75rem);
+  min-height: 120px;
+}
+
+.task-drag-item {
+  position: relative;
+}
+
+.drag-handle {
+  position: absolute;
+  top: var(--space-2, 0.5rem);
+  right: 2.75rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-grey-50, #fafafa);
+  color: var(--color-text-muted, #757575);
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 5px 12px rgb(0 0 0 / 18%);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
 }
 
 .column-empty {

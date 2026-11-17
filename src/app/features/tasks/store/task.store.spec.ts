@@ -358,6 +358,53 @@ describe('TaskStore', () => {
     });
   });
 
+  describe('moveTask()', () => {
+    it('updates order immediately and persists a status change', async () => {
+      const tasks = [makeTask(), makeTask({ id: 'task-2', title: 'Second task' })];
+      await flushTaskList(httpMock, tasks);
+
+      store.moveTask('task-1', TaskStatus.IN_PROGRESS, ['task-2', 'task-1']);
+
+      expect(store.tasks().map((task) => task.id)).toEqual(['task-2', 'task-1']);
+      expect(store.tasks()[1]?.status).toBe(TaskStatus.IN_PROGRESS);
+
+      await drainMicrotasks();
+      httpMock
+        .expectOne((r) => r.method === 'PATCH' && r.url === `${BASE_URL}/task-1`)
+        .flush(makeTask({ status: TaskStatus.IN_PROGRESS }));
+
+      await drainMicrotasks();
+      await flushActivityWrite(httpMock);
+      await flushTaskList(
+        httpMock,
+        tasks.map((task) =>
+          task.id === 'task-1' ? { ...task, status: TaskStatus.IN_PROGRESS } : task,
+        ),
+      );
+
+      expect(store.tasks().find((task) => task.id === 'task-1')?.status).toBe(
+        TaskStatus.IN_PROGRESS,
+      );
+    });
+
+    it('restores the prior status and exposes an error when persistence fails', async () => {
+      await flushTaskList(httpMock, [makeTask()]);
+
+      store.moveTask('task-1', TaskStatus.DONE, ['task-1']);
+      expect(store.tasks()[0]?.status).toBe(TaskStatus.DONE);
+
+      await drainMicrotasks();
+      httpMock
+        .expectOne((r) => r.method === 'PATCH' && r.url === `${BASE_URL}/task-1`)
+        .flush('Failed', { status: 500, statusText: 'Server Error' });
+      await drainMicrotasks();
+
+      expect(store.tasks()[0]?.status).toBe(TaskStatus.TODO);
+      expect(store.error()).toContain('500');
+      expect(store.isMutating()).toBe(false);
+    });
+  });
+
   describe('deleteTask()', () => {
     it('DELETEs /tasks/:id, clears selection, and reloads', async () => {
       await flushTaskList(httpMock, [makeTask()]);

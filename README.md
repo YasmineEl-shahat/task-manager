@@ -45,7 +45,7 @@ A high-performance, enterprise-grade Task Management application engineered with
 
 ### Key Capabilities
 
-- **Interactive Kanban Board**: Categorized columns (`TO DO`, `IN PROGRESS`, `DONE`) with column count badges, status tab switching, and empty states.
+- **Interactive Kanban Board**: Categorized columns (`TO DO`, `IN PROGRESS`, `DONE`) with column count badges, status tab switching, empty states, and drag-and-drop task reordering and status changes.
 - **Dynamic Task CRUD Operations**: Dialog-based task creation and editing with full form validation, priority assignment, and assignee selection.
 - **Real-Time KPI Dashboard**: Live computation of total tasks, completion rates, in-progress workloads, and overdue items with visual indicators.
 - **Interactive Analytics**: Pure SVG data visualizations including a status distribution donut chart, priority breakdown, and summary metric cards without heavy charting dependencies.
@@ -487,13 +487,11 @@ _Coverage reports are generated in the `coverage/` directory in text, JSON, and 
 
 ### Current Limitations
 
-- **Drag-and-Drop Column Transitions**: Status changes are currently performed via the task editing modal and action menus rather than tactile drag-and-drop gestures across Kanban columns.
 - **In-Memory Persistence**: Without a persistent backend server, data modifications are written to `data-fetching/db.json` locally; offline browser persistence (IndexedDB) is not yet enabled.
 - **Client/Server Filtering Synchronization**: Complex string search is augmented client-side via computed signals for instant responsiveness, backed by json-server basic query parameters.
 
 ### Future Improvements Roadmap
 
-- [ ] **CDK Drag & Drop**: Implement `@angular/cdk/drag-drop` between Kanban columns with optimistic UI updates.
 - [ ] **Real-Time Collaboration**: Integrate WebSockets or Server-Sent Events (SSE) to broadcast live task changes across team members.
 - [ ] **Dark Mode Theme**: Introduce a dark color palette toggle utilizing the existing CSS custom property token structure.
 - [ ] **Offline & PWA Capabilities**: Add `@angular/pwa` service workers with background synchronization and IndexedDB caching.

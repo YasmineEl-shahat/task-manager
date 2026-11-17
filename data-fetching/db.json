@@ -4,7 +4,7 @@
       "id": "task-001",
       "title": "Design new homepage layout",
       "description": "Create wireframes and mockups for the new homepage redesign with modern UI elements",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "high",
       "dueDate": "2026-11-18",
       "assignee": {
@@ -13,7 +13,9 @@
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": ["Design"],
+      "tags": [
+        "Design"
+      ],
       "createdAt": "2026-11-14T22:44:56.244Z",
       "updatedAt": "2026-11-16T22:44:56.244Z"
     },
@@ -30,7 +32,9 @@
         "avatar": "SS",
         "email": "sarah.smith@company.com"
       },
-      "tags": ["Documentation"],
+      "tags": [
+        "Documentation"
+      ],
       "createdAt": "2026-11-13T22:44:56.244Z",
       "updatedAt": "2026-11-15T22:44:56.244Z"
     },
@@ -47,7 +51,9 @@
         "avatar": "MJ",
         "email": "mike.johnson@company.com"
       },
-      "tags": ["Admin"],
+      "tags": [
+        "Admin"
+      ],
       "createdAt": "2026-11-12T22:44:56.244Z",
       "updatedAt": "2026-11-15T22:44:56.244Z"
     },
@@ -65,7 +71,9 @@
         "avatar": "SS",
         "email": "sarah.smith@company.com"
       },
-      "tags": ["Finance"],
+      "tags": [
+        "Finance"
+      ],
       "createdAt": "2026-10-31T22:44:56.244Z",
       "updatedAt": "2026-11-16T22:44:56.244Z"
     },
@@ -83,7 +91,9 @@
         "avatar": "ED",
         "email": "emily.davis@company.com"
       },
-      "tags": ["Research"],
+      "tags": [
+        "Research"
+      ],
       "createdAt": "2026-11-01T22:44:56.244Z",
       "updatedAt": "2026-11-15T22:44:56.244Z"
     },
@@ -100,7 +110,9 @@
         "avatar": "ED",
         "email": "emily.davis@company.com"
       },
-      "tags": ["Frontend"],
+      "tags": [
+        "Frontend"
+      ],
       "createdAt": "2026-11-11T22:44:56.244Z",
       "updatedAt": "2026-11-16T22:44:56.244Z"
     },
@@ -117,7 +129,9 @@
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": ["Backend"],
+      "tags": [
+        "Backend"
+      ],
       "createdAt": "2026-11-09T22:44:56.244Z",
       "updatedAt": "2026-11-16T22:44:56.244Z"
     },
@@ -134,7 +148,9 @@
         "avatar": "SS",
         "email": "sarah.smith@company.com"
       },
-      "tags": ["Performance"],
+      "tags": [
+        "Performance"
+      ],
       "createdAt": "2026-11-10T22:44:56.244Z",
       "updatedAt": "2026-11-15T22:44:56.244Z"
     },
@@ -151,7 +167,9 @@
         "avatar": "MJ",
         "email": "mike.johnson@company.com"
       },
-      "tags": ["Backend"],
+      "tags": [
+        "Backend"
+      ],
       "createdAt": "2026-11-08T22:44:56.244Z",
       "updatedAt": "2026-11-16T22:44:56.244Z"
     },
@@ -168,7 +186,9 @@
         "avatar": "ED",
         "email": "emily.davis@company.com"
       },
-      "tags": ["Frontend"],
+      "tags": [
+        "Frontend"
+      ],
       "createdAt": "2026-11-07T22:44:56.244Z",
       "updatedAt": "2026-11-15T22:44:56.244Z"
     },
@@ -186,7 +206,10 @@
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": ["Backend", "Critical"],
+      "tags": [
+        "Backend",
+        "Critical"
+      ],
       "createdAt": "2026-11-02T22:44:56.244Z",
       "updatedAt": "2026-11-16T22:44:56.244Z"
     },
@@ -204,7 +227,9 @@
         "avatar": "MJ",
         "email": "mike.johnson@company.com"
       },
-      "tags": ["Bug Fix"],
+      "tags": [
+        "Bug Fix"
+      ],
       "createdAt": "2026-11-14T22:44:56.244Z",
       "updatedAt": "2026-11-16T22:44:56.244Z"
     },
@@ -222,7 +247,9 @@
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": ["DevOps"],
+      "tags": [
+        "DevOps"
+      ],
       "createdAt": "2026-11-07T22:44:56.244Z",
       "updatedAt": "2026-11-15T22:44:56.244Z"
     },
@@ -240,7 +267,9 @@
         "avatar": "SS",
         "email": "sarah.smith@company.com"
       },
-      "tags": ["Testing"],
+      "tags": [
+        "Testing"
+      ],
       "createdAt": "2026-11-06T22:44:56.244Z",
       "updatedAt": "2026-11-14T22:44:56.244Z"
     },
@@ -258,7 +287,9 @@
         "avatar": "ED",
         "email": "emily.davis@company.com"
       },
-      "tags": ["Refactoring"],
+      "tags": [
+        "Refactoring"
+      ],
       "createdAt": "2026-11-04T22:44:56.244Z",
       "updatedAt": "2026-11-13T22:44:56.244Z"
     },
@@ -276,7 +307,9 @@
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": ["Security"],
+      "tags": [
+        "Security"
+      ],
       "createdAt": "2026-11-03T22:44:56.244Z",
       "updatedAt": "2026-11-12T22:44:56.244Z"
     },
@@ -294,7 +327,9 @@
         "avatar": "MJ",
         "email": "mike.johnson@company.com"
       },
-      "tags": ["Maintenance"],
+      "tags": [
+        "Maintenance"
+      ],
       "createdAt": "2026-11-02T22:44:56.244Z",
       "updatedAt": "2026-11-11T22:44:56.244Z"
     }
@@ -379,6 +414,15 @@
       "performedBy": "Sarah Smith",
       "description": "Created task \"Prepare Q4 budget report\"",
       "createdAt": "2026-11-15T22:44:56.249Z"
+    },
+    {
+      "id": "act-1794898120468-cv9ir",
+      "taskId": "task-001",
+      "taskTitle": "Design new homepage layout",
+      "action": "status_changed",
+      "performedBy": "John Doe",
+      "description": "Changed status to In Progress for \"Design new homepage layout\"",
+      "createdAt": "2026-11-17T06:48:40.468Z"
     }
   ]
 }

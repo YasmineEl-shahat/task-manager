@@ -4,14 +4,30 @@
     <span class="column-badge">{{ count() }}</span>
   </div>
 
-  <div class="column-cards">
+  <div
+    class="column-cards"
+    cdkDropList
+    [cdkDropListData]="tasks()"
+    (cdkDropListDropped)="onDrop($event)"
+  >
     @for (task of tasks(); track task.id) {
-      <app-task-card
-        [task]="task"
-        (selectTask)="selectTask.emit($event)"
-        (editTask)="editTask.emit($event)"
-        (deleteTask)="deleteTask.emit($event)"
-      />
+      <div class="task-drag-item" cdkDrag [cdkDragData]="task">
+        <button
+          type="button"
+          class="drag-handle"
+          cdkDragHandle
+          [attr.aria-label]="'Reorder task ' + task.title"
+          title="Drag to reorder or change status"
+        >
+          <mat-icon>drag_indicator</mat-icon>
+        </button>
+        <app-task-card
+          [task]="task"
+          (selectTask)="selectTask.emit($event)"
+          (editTask)="editTask.emit($event)"
+          (deleteTask)="deleteTask.emit($event)"
+        />
+      </div>
     } @empty {
       <div class="column-empty">
         <mat-icon class="empty-icon">{{ emptyIcon() }}</mat-icon>

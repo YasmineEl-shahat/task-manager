@@ -119,6 +119,28 @@ describe('KanbanBoardComponent', () => {
     expect(board).toBeNull();
   });
 
+  it('emits the reordered task IDs after a same-column drop', () => {
+    const dropSpy = vi.fn();
+    component.taskDrop.subscribe(dropSpy);
+    const tasks = [...component.todoTasks(), { ...mockTasks[0]!, id: 't-4', title: 'Task 4' }];
+    const container = { data: tasks };
+
+    component.onTaskDrop(TaskStatus.TODO, {
+      previousContainer: container,
+      container,
+      previousIndex: 1,
+      currentIndex: 0,
+      item: { data: tasks[1] },
+    } as unknown as Parameters<typeof component.onTaskDrop>[1]);
+
+    expect(dropSpy).toHaveBeenCalledWith({
+      taskId: 't-4',
+      status: TaskStatus.TODO,
+      statusChanged: false,
+      orderedTaskIds: ['t-4', 't-1'],
+    });
+  });
+
   it('emits selectTask, editTask, and deleteTask events from task cards', () => {
     const selectSpy = vi.fn();
     const editSpy = vi.fn();
