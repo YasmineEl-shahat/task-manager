@@ -22,7 +22,7 @@
         </defs>
       </svg>
     </div>
-    <span class="brand-name">Task Manager</span>
+    <span class="brand-name">{{ 'Task Manager' | translate }}</span>
   </div>
 
   <!-- Center: Search input -->
@@ -32,10 +32,10 @@
       <input
         type="text"
         class="search-input"
-        placeholder="Search tasks..."
+        [placeholder]="'Search tasks...' | translate"
         [value]="searchQuery()"
         (input)="onSearchInput($event)"
-        aria-label="Search tasks"
+        [attr.aria-label]="'Search tasks' | translate"
       />
     </div>
   </div>
@@ -43,10 +43,19 @@
   <!-- Right: Notifications & User Avatar -->
   <div class="topbar-actions">
     <button
+      mat-button
+      type="button"
+      class="language-switch"
+      [attr.aria-label]="i18n.language() === 'en' ? 'العربية' : 'English'"
+      (click)="i18n.toggleLanguage()"
+    >
+      {{ i18n.language() === 'en' ? 'العربية' : 'English' }}
+    </button>
+    <button
       mat-icon-button
       type="button"
       class="action-btn notification-btn"
-      aria-label="View recent activity"
+      [attr.aria-label]="'View recent activity' | translate"
       (click)="notificationClick.emit()"
     >
       <mat-icon class="bell-icon">notifications</mat-icon>

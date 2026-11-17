@@ -11,6 +11,7 @@ import { Assignee, Task } from '@tasks/models/task.model';
 import { CreateTaskDto } from '@tasks/models/task.dto';
 import { TaskStore } from '@tasks/store/task.store';
 import { TEAM_MEMBERS } from '@features/team/data/team-members.data';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 export interface TaskFormData {
   task?: Task;
@@ -32,6 +33,7 @@ const DEFAULT_ASSIGNEE: Assignee = AVAILABLE_ASSIGNEES[0]!;
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    TranslatePipe,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',

@@ -1,7 +1,7 @@
 <div class="dashboard-page">
-  <h1 class="visually-hidden">Task dashboard</h1>
+  <h1 class="visually-hidden">{{ 'Task dashboard' | translate }}</h1>
   <!-- ── 1. Statistics Cards Grid ─────────────────────────────────────────── -->
-  <section class="stats-grid" aria-label="Task Statistics">
+  <section class="stats-grid" [attr.aria-label]="'Task Statistics' | translate">
     @for (card of statCards(); track card.title) {
       <app-stat-card
         [title]="card.title"
@@ -28,8 +28,8 @@
   }
 
   <!-- ── 3. Filter Bar & Actions ─────────────────────────────────────────── -->
-  <section class="action-bar" aria-label="Filters and Actions">
-    <div class="status-tabs" role="group" aria-label="Filter tasks by status">
+  <section class="action-bar" [attr.aria-label]="'Filters and Actions' | translate">
+    <div class="status-tabs" role="group" [attr.aria-label]="'Filter tasks by status' | translate">
       @for (tab of statusTabs; track tab.id) {
         <button
           type="button"
@@ -38,7 +38,7 @@
           (click)="onTabSelect(tab.id)"
           [attr.aria-pressed]="selectedTab() === tab.id"
         >
-          {{ tab.label }}
+          {{ tab.label | translate }}
         </button>
       }
     </div>
@@ -46,13 +46,13 @@
     <div class="right-actions">
       <!-- Priority Filter Menu -->
       <mat-form-field appearance="outline" class="priority-select" subscriptSizing="dynamic">
-        <mat-label>Priority</mat-label>
+        <mat-label>{{ 'Priority' | translate }}</mat-label>
         <mat-select
           [value]="store.filters().priority"
           (selectionChange)="onPriorityChange($event.value)"
         >
           @for (option of priorityOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -63,11 +63,11 @@
         class="activity-toggle-btn"
         [class.active]="store.isActivityPanelOpen()"
         (click)="toggleActivityFeed()"
-        aria-label="Toggle Recent Activity Feed"
+        [attr.aria-label]="'Toggle Recent Activity Feed' | translate"
         [attr.aria-expanded]="store.isActivityPanelOpen()"
       >
         <mat-icon class="activity-btn-icon">history</mat-icon>
-        <span>Activity</span>
+        <span>{{ 'Activity' | translate }}</span>
         @if (store.activities().length > 0) {
           <span class="activity-badge">{{ store.activities().length }}</span>
         }
@@ -80,9 +80,9 @@
         class="add-task-btn"
         type="button"
         (click)="openCreateModal()"
-        aria-label="Create New Task"
+        [attr.aria-label]="'Create New Task' | translate"
       >
-        <span>+ New Task</span>
+        <span>+ {{ 'New Task' | translate }}</span>
       </button>
     </div>
   </section>

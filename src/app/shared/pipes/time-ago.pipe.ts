@@ -16,7 +16,11 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class TimeAgoPipe implements PipeTransform {
-  transform(value: string | Date | null | undefined, referenceDate: Date = new Date()): string {
+  transform(
+    value: string | Date | null | undefined,
+    referenceDate: Date = new Date(),
+    locale: 'en' | 'ar' = 'en',
+  ): string {
     if (!value) return '';
 
     const date = typeof value === 'string' ? new Date(value) : value;
@@ -25,29 +29,29 @@ export class TimeAgoPipe implements PipeTransform {
     const diffInSeconds = Math.floor((referenceDate.getTime() - date.getTime()) / 1000);
 
     if (diffInSeconds < 60) {
-      return 'Just now';
+      return locale === 'ar' ? 'الآن' : 'Just now';
     }
 
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) {
-      return `${diffInMinutes}m ago`;
+      return locale === 'ar' ? `منذ ${diffInMinutes}د` : `${diffInMinutes}m ago`;
     }
 
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) {
-      return `${diffInHours}h ago`;
+      return locale === 'ar' ? `منذ ${diffInHours}س` : `${diffInHours}h ago`;
     }
 
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays === 1) {
-      return 'Yesterday';
+      return locale === 'ar' ? 'أمس' : 'Yesterday';
     }
 
     if (diffInDays < 7) {
-      return `${diffInDays}d ago`;
+      return locale === 'ar' ? `منذ ${diffInDays}ي` : `${diffInDays}d ago`;
     }
 
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(locale === 'ar' ? 'ar' : 'en-US', {
       month: 'short',
       day: 'numeric',
       year: date.getFullYear() !== referenceDate.getFullYear() ? 'numeric' : undefined,

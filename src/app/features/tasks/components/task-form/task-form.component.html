@@ -1,34 +1,34 @@
 <h2 mat-dialog-title class="dialog-title">
-  {{ isEditMode ? 'Edit Task' : 'Create New Task' }}
+  {{ (isEditMode ? 'Edit Task' : 'Create New Task') | translate }}
 </h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="task-form">
   <mat-dialog-content class="dialog-content">
     <!-- Title -->
     <mat-form-field appearance="outline" class="form-field full-width">
-      <mat-label>Task Title</mat-label>
+      <mat-label>{{ 'Task Title' | translate }}</mat-label>
       <input
         matInput
         formControlName="title"
-        placeholder="e.g. Design new homepage layout"
+        [placeholder]="'e.g. Design new homepage layout' | translate"
         data-testid="task-title-input"
       />
       @if (form.controls.title.hasError('required') && form.controls.title.touched) {
-        <mat-error>Title is required</mat-error>
+        <mat-error>{{ 'Title is required' | translate }}</mat-error>
       }
       @if (form.controls.title.hasError('minlength') && form.controls.title.touched) {
-        <mat-error>Title must be at least 3 characters</mat-error>
+        <mat-error>{{ 'Title must be at least 3 characters' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <!-- Description -->
     <mat-form-field appearance="outline" class="form-field full-width">
-      <mat-label>Description</mat-label>
+      <mat-label>{{ 'Description' | translate }}</mat-label>
       <textarea
         matInput
         rows="3"
         formControlName="description"
-        placeholder="Brief description of the task..."
+        [placeholder]="'Brief description of the task...' | translate"
         data-testid="task-desc-input"
       ></textarea>
     </mat-form-field>
@@ -36,21 +36,21 @@
     <div class="form-row">
       <!-- Status -->
       <mat-form-field appearance="outline" class="form-field half-width">
-        <mat-label>Status</mat-label>
+        <mat-label>{{ 'Status' | translate }}</mat-label>
         <mat-select formControlName="status" data-testid="task-status-select">
-          <mat-option [value]="TaskStatus.TODO">To Do</mat-option>
-          <mat-option [value]="TaskStatus.IN_PROGRESS">In Progress</mat-option>
-          <mat-option [value]="TaskStatus.DONE">Done</mat-option>
+          <mat-option [value]="TaskStatus.TODO">{{ 'To Do' | translate }}</mat-option>
+          <mat-option [value]="TaskStatus.IN_PROGRESS">{{ 'In Progress' | translate }}</mat-option>
+          <mat-option [value]="TaskStatus.DONE">{{ 'Done' | translate }}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <!-- Priority -->
       <mat-form-field appearance="outline" class="form-field half-width">
-        <mat-label>Priority</mat-label>
+        <mat-label>{{ 'Priority' | translate }}</mat-label>
         <mat-select formControlName="priority" data-testid="task-priority-select">
-          <mat-option [value]="TaskPriority.HIGH">High</mat-option>
-          <mat-option [value]="TaskPriority.MEDIUM">Medium</mat-option>
-          <mat-option [value]="TaskPriority.LOW">Low</mat-option>
+          <mat-option [value]="TaskPriority.HIGH">{{ 'High' | translate }}</mat-option>
+          <mat-option [value]="TaskPriority.MEDIUM">{{ 'Medium' | translate }}</mat-option>
+          <mat-option [value]="TaskPriority.LOW">{{ 'Low' | translate }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -58,41 +58,43 @@
     <div class="form-row">
       <!-- Due Date -->
       <mat-form-field appearance="outline" class="form-field half-width">
-        <mat-label>Due Date</mat-label>
+        <mat-label>{{ 'Due Date' | translate }}</mat-label>
         <input matInput type="date" formControlName="dueDate" data-testid="task-duedate-input" />
         @if (form.controls.dueDate.hasError('required') && form.controls.dueDate.touched) {
-          <mat-error>Due date is required</mat-error>
+          <mat-error>{{ 'Due date is required' | translate }}</mat-error>
         }
       </mat-form-field>
 
       <!-- Assignee -->
       <mat-form-field appearance="outline" class="form-field half-width">
-        <mat-label>Assignee</mat-label>
+        <mat-label>{{ 'Assignee' | translate }}</mat-label>
         <mat-select formControlName="assigneeId" data-testid="task-assignee-select">
           @for (user of assignees; track user.id) {
             <mat-option [value]="user.id"> {{ user.name }} ({{ user.avatar }}) </mat-option>
           }
         </mat-select>
         @if (form.controls.assigneeId.hasError('required') && form.controls.assigneeId.touched) {
-          <mat-error>Assignee is required</mat-error>
+          <mat-error>{{ 'Assignee is required' | translate }}</mat-error>
         }
       </mat-form-field>
     </div>
 
     <!-- Tags (comma separated) -->
     <mat-form-field appearance="outline" class="form-field full-width">
-      <mat-label>Tags (comma separated)</mat-label>
+      <mat-label>{{ 'Tags (comma separated)' | translate }}</mat-label>
       <input
         matInput
         formControlName="tags"
-        placeholder="e.g. Design, Frontend, UI"
+        [placeholder]="'e.g. Design, Frontend, UI' | translate"
         data-testid="task-tags-input"
       />
     </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="dialog-actions">
-    <button mat-button type="button" (click)="onCancel()" data-testid="cancel-btn">Cancel</button>
+    <button mat-button type="button" (click)="onCancel()" data-testid="cancel-btn">
+      {{ 'Cancel' | translate }}
+    </button>
     <button
       mat-flat-button
       color="primary"
@@ -100,7 +102,7 @@
       [disabled]="form.invalid || isSubmitting()"
       data-testid="submit-btn"
     >
-      {{ isEditMode ? 'Save Changes' : 'Create Task' }}
+      {{ (isEditMode ? 'Save Changes' : 'Create Task') | translate }}
     </button>
   </mat-dialog-actions>
 </form>

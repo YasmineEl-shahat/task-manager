@@ -13,6 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivityAction, TaskActivity } from '@tasks/models/task-activity.model';
 import { TaskStore } from '@tasks/store/task.store';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
+import { I18nService } from '@app/core/i18n/i18n.service';
 
 export type ActivityFilterType = 'all' | ActivityAction;
 
@@ -31,12 +33,13 @@ export interface ActivityFilterOption {
   selector: 'app-activity-feed',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, MatButtonModule, TimeAgoPipe],
+  imports: [MatIconModule, MatButtonModule, TimeAgoPipe, TranslatePipe],
   templateUrl: './activity-feed.component.html',
   styleUrl: './activity-feed.component.scss',
 })
 export class ActivityFeedComponent {
   readonly store = inject(TaskStore);
+  readonly i18n = inject(I18nService);
 
   /** Optional external activities list; defaults to `store.activities()` when omitted. */
   readonly activities = input<readonly TaskActivity[] | null>(null);

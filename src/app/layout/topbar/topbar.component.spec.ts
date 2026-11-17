@@ -50,6 +50,20 @@ describe('TopbarComponent', () => {
     expect(brandIcon).toBeTruthy();
   });
 
+  it('switches the visible UI language and restores English when toggled again', () => {
+    component.i18n.setLanguage('en');
+    component.i18n.toggleLanguage();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.brand-name').textContent).toContain('مدير المهام');
+
+    component.i18n.toggleLanguage();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.brand-name').textContent).toContain(
+      'Task Manager',
+    );
+  });
+
   it('emits notificationClick when notification button is clicked', () => {
     const spy = vi.fn();
     component.notificationClick.subscribe(spy);

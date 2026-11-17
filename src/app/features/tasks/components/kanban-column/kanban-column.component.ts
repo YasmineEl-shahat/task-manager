@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TaskStatus } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
 import { TaskCardComponent } from '../task-card/task-card.component';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 /**
  * Kanban Column Component.
@@ -15,7 +16,7 @@ import { TaskCardComponent } from '../task-card/task-card.component';
   selector: 'app-kanban-column',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, TaskCardComponent, CdkDrag, CdkDragHandle, CdkDropList],
+  imports: [MatIconModule, TaskCardComponent, CdkDrag, CdkDragHandle, CdkDropList, TranslatePipe],
   templateUrl: './kanban-column.component.html',
   styleUrl: './kanban-column.component.scss',
 })

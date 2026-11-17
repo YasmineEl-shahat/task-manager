@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { I18nService } from '@app/core/i18n/i18n.service';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 /**
  * TopBar Header Component.
@@ -9,11 +11,12 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-topbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, TranslatePipe],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss',
 })
 export class TopbarComponent {
+  readonly i18n = inject(I18nService);
   readonly searchQuery = input<string>('');
   readonly searchChange = output<string>();
 

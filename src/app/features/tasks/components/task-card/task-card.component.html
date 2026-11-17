@@ -6,7 +6,7 @@
         [class]="'priority-' + task().priority"
         [class.overdue-priority]="isOverdue()"
       >
-        {{ priorityLabel() }}
+        {{ priorityLabel() | translate }}
       </span>
     </div>
 
@@ -15,7 +15,7 @@
       type="button"
       class="more-menu-btn"
       [matMenuTriggerFor]="taskMenu"
-      [attr.aria-label]="'Task options for ' + task().title"
+      [attr.aria-label]="'Task options for {title}' | translate: { title: task().title }"
     >
       <mat-icon class="more-icon">more_vert</mat-icon>
     </button>
@@ -36,7 +36,7 @@
       @if (dueStatusInfo(); as due) {
         <div class="meta-row due-row" [class.overdue-meta]="due.isOverdue">
           <mat-icon class="meta-icon">{{ due.icon }}</mat-icon>
-          <span>{{ due.text }}</span>
+          <span>{{ due.text | translate }}</span>
         </div>
       }
 
@@ -60,17 +60,21 @@
   </div>
 
   <mat-menu #taskMenu="matMenu" xPosition="before">
-    <button mat-menu-item (click)="onEdit($event)" [attr.aria-label]="'Edit task: ' + task().title">
+    <button
+      mat-menu-item
+      (click)="onEdit($event)"
+      [attr.aria-label]="'Edit task: {title}' | translate: { title: task().title }"
+    >
       <mat-icon>edit</mat-icon>
-      <span>Edit</span>
+      <span>{{ 'Edit' | translate }}</span>
     </button>
     <button
       mat-menu-item
       (click)="onDelete($event)"
-      [attr.aria-label]="'Delete task: ' + task().title"
+      [attr.aria-label]="'Delete task: {title}' | translate: { title: task().title }"
     >
       <mat-icon color="warn">delete</mat-icon>
-      <span>Delete</span>
+      <span>{{ 'Delete' | translate }}</span>
     </button>
     @for (option of statusOptions; track option.value) {
       <button
@@ -79,12 +83,12 @@
         (click)="onStatusChange(option.value)"
       >
         <mat-icon>arrow_forward</mat-icon>
-        <span>Move to {{ option.label }}</span>
+        <span>{{ 'Move to {status}' | translate: { status: option.label | translate } }}</span>
       </button>
     }
     <button mat-menu-item [disabled]="position() === 0" (click)="reorder.emit('up')">
       <mat-icon>arrow_upward</mat-icon>
-      <span>Move earlier</span>
+      <span>{{ 'Move earlier' | translate }}</span>
     </button>
     <button
       mat-menu-item
@@ -92,7 +96,7 @@
       (click)="reorder.emit('down')"
     >
       <mat-icon>arrow_downward</mat-icon>
-      <span>Move later</span>
+      <span>{{ 'Move later' | translate }}</span>
     </button>
   </mat-menu>
 </article>

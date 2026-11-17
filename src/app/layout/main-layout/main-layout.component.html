@@ -1,5 +1,5 @@
 <div class="layout-container">
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a class="skip-link" href="#main-content">{{ 'Skip to main content' | translate }}</a>
   <app-topbar
     (searchChange)="onGlobalSearch($event)"
     (notificationClick)="store.toggleActivityPanel()"

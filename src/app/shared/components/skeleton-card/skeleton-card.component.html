@@ -1,4 +1,4 @@
-<section class="skeleton-board" aria-label="Loading kanban board">
+<section class="skeleton-board" [attr.aria-label]="'Loading kanban board' | translate">
   @for (column of columns(); track column.title) {
     <div class="skeleton-column">
       <div class="column-header">

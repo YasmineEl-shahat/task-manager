@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 /**
  * Inline loading spinner component.
@@ -9,7 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-loading-spinner',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatProgressSpinnerModule],
+  imports: [MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './loading-spinner.component.html',
   styleUrl: './loading-spinner.component.scss',
 })

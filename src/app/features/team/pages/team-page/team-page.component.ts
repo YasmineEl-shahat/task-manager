@@ -7,6 +7,7 @@ import { TeamMember } from '@features/team/models/team-member.model';
 import { TEAM_MEMBERS } from '@features/team/data/team-members.data';
 import { TaskStatus } from '@tasks/models/task.enums';
 import { TaskStore } from '@tasks/store/task.store';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 interface TeamMemberSummary extends TeamMember {
   readonly assignedTasks: number;
@@ -18,7 +19,7 @@ interface TeamMemberSummary extends TeamMember {
   selector: 'app-team-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatDialogModule, MatIconModule],
+  imports: [MatButtonModule, MatDialogModule, MatIconModule, TranslatePipe],
   templateUrl: './team-page.component.html',
   styleUrl: './team-page.component.scss',
 })

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 import { NavItem } from './nav-item.type';
 import { DEFAULT_NAV_ITEMS } from './nav-items.constants';
@@ -16,7 +17,7 @@ export { DEFAULT_NAV_ITEMS };
 @Component({
   selector: 'app-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, MatButtonModule, MatIconModule],
+  imports: [RouterLink, RouterLinkActive, MatButtonModule, MatIconModule, TranslatePipe],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })

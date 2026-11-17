@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { INITIAL_TASK_FILTERS, TaskFilters } from '@tasks/models/task-filter.model';
 import { TaskFilterPriority, TaskFilterStatus } from '@tasks/models/task.enums';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 /**
  * Presentational (dumb) component for filtering and searching tasks.
@@ -15,7 +16,14 @@ import { TaskFilterPriority, TaskFilterStatus } from '@tasks/models/task.enums';
 @Component({
   selector: 'app-task-filter',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    TranslatePipe,
+  ],
   templateUrl: './task-filter.component.html',
   styleUrl: './task-filter.component.scss',
 })

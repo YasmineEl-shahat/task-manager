@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TaskFilterPriority, TaskStatus } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
 import { TaskStore } from '@tasks/store/task.store';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 import { KanbanBoardComponent } from '@tasks/components/kanban-board/kanban-board.component';
 import {
   ConfirmDialogComponent,
@@ -52,6 +53,7 @@ export interface PriorityFilterOption {
     ErrorBannerComponent,
     StatCardComponent,
     KanbanBoardComponent,
+    TranslatePipe,
   ],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss',

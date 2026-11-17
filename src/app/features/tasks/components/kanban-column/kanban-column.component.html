@@ -1,6 +1,6 @@
 <div class="kanban-column">
   <div class="column-header">
-    <h3 class="column-title">{{ title() }}</h3>
+    <h3 class="column-title">{{ title() | translate }}</h3>
     <span class="column-badge">{{ count() }}</span>
   </div>
 
@@ -17,7 +17,7 @@
           class="drag-handle"
           cdkDragHandle
           [attr.aria-label]="'Reorder task ' + task.title"
-          title="Drag to reorder or change status"
+          [title]="'Drag to reorder or change status' | translate"
         >
           <mat-icon>drag_indicator</mat-icon>
         </button>
@@ -35,7 +35,7 @@
     } @empty {
       <div class="column-empty">
         <mat-icon class="empty-icon">{{ emptyIcon() }}</mat-icon>
-        <span>{{ emptyMessage() }}</span>
+        <span>{{ emptyMessage() | translate }}</span>
       </div>
     }
   </div>

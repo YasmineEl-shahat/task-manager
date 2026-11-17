@@ -17,6 +17,7 @@ A high-performance, enterprise-grade Task Management application engineered with
   - [Folder & Domain Architecture](#folder--domain-architecture)
   - [Component Architecture & Hierarchy](#component-architecture--hierarchy)
   - [Architectural Decision Records (ADRs)](#architectural-decision-records-adrs)
+- [Internationalization](#internationalization)
 - [Setup & Installation Instructions](#-setup--installation-instructions)
   - [Prerequisites](#prerequisites)
   - [Installation Steps](#installation-steps)
@@ -47,6 +48,7 @@ A high-performance, enterprise-grade Task Management application engineered with
 
 - **Interactive Kanban Board**: Categorized columns (`TO DO`, `IN PROGRESS`, `DONE`) with column count badges, status filters, empty states, drag-and-drop, and keyboard-accessible task status and ordering actions.
 - **Accessibility**: Skip navigation link, semantic task actions, focus-managed activity dialog, reduced-motion support, and keyboard alternatives for Kanban drag-and-drop.
+- **Internationalization**: Runtime English and Arabic language switching with persisted preference and right-to-left layout support.
 - **Dynamic Task CRUD Operations**: Dialog-based task creation and editing with full form validation, priority assignment, and assignee selection.
 - **Real-Time KPI Dashboard**: Live computation of total tasks, completion rates, in-progress workloads, and overdue items with visual indicators.
 - **Interactive Analytics**: Pure SVG data visualizations including a status distribution donut chart, priority breakdown, and summary metric cards without heavy charting dependencies.
@@ -55,6 +57,10 @@ A high-performance, enterprise-grade Task Management application engineered with
 - **Multi-Factor Search & Filtering**: Client- and server-level reactive filtering across statuses, priority levels, assignees, and real-time debounced text query search.
 - **Resilient Error Recovery**: Centralized error management banner with manual and automatic retry triggers.
 - **Responsive Layout**: Collapsible navigation sidebar, elevated topbar with global search, and adaptive grid layouts.
+
+## Internationalization
+
+The app supports English and Arabic. Use the language control in the top bar to switch languages at runtime; the selection is remembered between visits. Arabic also sets the document language and right-to-left direction. Shared translations are managed by `I18nService` and the `translate` pipe in `src/app/core/i18n/`.
 
 ---
 

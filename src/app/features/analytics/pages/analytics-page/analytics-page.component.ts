@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TaskStore } from '@tasks/store/task.store';
 import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 export interface ChartSegment {
   readonly label: string;
@@ -35,7 +36,7 @@ const CIRCUMFERENCE = 2 * Math.PI * 54;
   selector: 'app-analytics-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule],
+  imports: [MatIconModule, TranslatePipe],
   templateUrl: './analytics-page.component.html',
   styleUrl: './analytics-page.component.scss',
 })

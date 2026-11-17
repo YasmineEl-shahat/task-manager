@@ -1,22 +1,22 @@
 <div class="filters-container">
   <!-- Search input -->
   <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
-    <mat-label>Search tasks</mat-label>
+    <mat-label>{{ 'Search tasks' | translate }}</mat-label>
     <mat-icon matPrefix>search</mat-icon>
     <input
       matInput
       type="text"
       [value]="filters().search"
       (input)="onSearchInput($event)"
-      placeholder="Search by title or description…"
-      aria-label="Search tasks"
+      [placeholder]="'Search by title or description…' | translate"
+      [attr.aria-label]="'Search tasks' | translate"
     />
     @if (filters().search) {
       <button
         matSuffix
         mat-icon-button
         type="button"
-        aria-label="Clear search"
+        [attr.aria-label]="'Clear search' | translate"
         (click)="clearSearch()"
       >
         <mat-icon>clear</mat-icon>
@@ -27,31 +27,33 @@
   <div class="dropdowns-row">
     <!-- Status filter -->
     <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
-      <mat-label>Status</mat-label>
+      <mat-label>{{ 'Status' | translate }}</mat-label>
       <mat-select
         [value]="filters().status"
         (selectionChange)="onStatusChange($event.value)"
-        aria-label="Filter by status"
+        [attr.aria-label]="'Filter by status' | translate"
       >
-        <mat-option [value]="TaskFilterStatus.ALL">All Statuses</mat-option>
-        <mat-option [value]="TaskFilterStatus.TODO">To Do</mat-option>
-        <mat-option [value]="TaskFilterStatus.IN_PROGRESS">In Progress</mat-option>
-        <mat-option [value]="TaskFilterStatus.DONE">Done</mat-option>
+        <mat-option [value]="TaskFilterStatus.ALL">{{ 'All Statuses' | translate }}</mat-option>
+        <mat-option [value]="TaskFilterStatus.TODO">{{ 'To Do' | translate }}</mat-option>
+        <mat-option [value]="TaskFilterStatus.IN_PROGRESS">{{
+          'In Progress' | translate
+        }}</mat-option>
+        <mat-option [value]="TaskFilterStatus.DONE">{{ 'Done' | translate }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <!-- Priority filter -->
     <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
-      <mat-label>Priority</mat-label>
+      <mat-label>{{ 'Priority' | translate }}</mat-label>
       <mat-select
         [value]="filters().priority"
         (selectionChange)="onPriorityChange($event.value)"
-        aria-label="Filter by priority"
+        [attr.aria-label]="'Filter by priority' | translate"
       >
-        <mat-option [value]="TaskFilterPriority.ALL">All Priorities</mat-option>
-        <mat-option [value]="TaskFilterPriority.HIGH">High</mat-option>
-        <mat-option [value]="TaskFilterPriority.MEDIUM">Medium</mat-option>
-        <mat-option [value]="TaskFilterPriority.LOW">Low</mat-option>
+        <mat-option [value]="TaskFilterPriority.ALL">{{ 'All Priorities' | translate }}</mat-option>
+        <mat-option [value]="TaskFilterPriority.HIGH">{{ 'High' | translate }}</mat-option>
+        <mat-option [value]="TaskFilterPriority.MEDIUM">{{ 'Medium' | translate }}</mat-option>
+        <mat-option [value]="TaskFilterPriority.LOW">{{ 'Low' | translate }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -63,10 +65,10 @@
         type="button"
         class="reset-btn"
         (click)="resetFilters.emit()"
-        aria-label="Reset all filters"
+        [attr.aria-label]="'Reset all filters' | translate"
       >
         <mat-icon>filter_alt_off</mat-icon>
-        Reset
+        {{ 'Reset' | translate }}
       </button>
     }
   </div>

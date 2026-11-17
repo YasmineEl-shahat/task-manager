@@ -1,7 +1,7 @@
 <div class="error-banner" role="alert" aria-live="assertive">
   <mat-icon class="error-icon" aria-hidden="true">error_outline</mat-icon>
 
-  <span class="error-message">{{ message() }}</span>
+  <span class="error-message">{{ message() | translate }}</span>
 
   <div class="error-actions">
     @if (showRetry()) {
@@ -10,23 +10,28 @@
         color="warn"
         [disabled]="retrying()"
         (click)="retry.emit()"
-        aria-label="Retry the failed request"
+        [attr.aria-label]="'Retry the failed request' | translate"
       >
         @if (retrying()) {
           <ng-container>
             <mat-icon>hourglass_empty</mat-icon>
-            <span>Retrying…</span>
+            <span>{{ 'Retrying…' | translate }}</span>
           </ng-container>
         } @else {
           <ng-container>
             <mat-icon>refresh</mat-icon>
-            <span>Retry</span>
+            <span>{{ 'Retry' | translate }}</span>
           </ng-container>
         }
       </button>
     }
 
-    <button mat-icon-button type="button" (click)="dismiss.emit()" aria-label="Dismiss error">
+    <button
+      mat-icon-button
+      type="button"
+      (click)="dismiss.emit()"
+      [attr.aria-label]="'Dismiss error' | translate"
+    >
       <mat-icon>close</mat-icon>
     </button>
   </div>

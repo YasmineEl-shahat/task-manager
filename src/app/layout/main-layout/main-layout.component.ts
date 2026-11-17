@@ -7,6 +7,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
 import { ActivityFeedComponent } from '@tasks/components/activity-feed/activity-feed.component';
 import { TaskStore } from '@tasks/store/task.store';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 /**
  * Main Application Layout Shell.
@@ -23,6 +24,7 @@ import { TaskStore } from '@tasks/store/task.store';
     ActivityFeedComponent,
     MatDialogModule,
     A11yModule,
+    TranslatePipe,
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',

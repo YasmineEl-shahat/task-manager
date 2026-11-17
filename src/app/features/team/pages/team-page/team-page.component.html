@@ -1,13 +1,18 @@
 <section class="team-page" aria-labelledby="team-title">
   <header class="page-header">
     <div>
-      <p class="eyebrow">People</p>
-      <h1 id="team-title">Team</h1>
-      <p class="page-description">Manage your team and assign work to the right people.</p>
+      <p class="eyebrow">{{ 'People' | translate }}</p>
+      <h1 id="team-title">{{ 'Team' | translate }}</h1>
+      <p class="page-description">
+        {{ 'Manage your team and assign work to the right people.' | translate }}
+      </p>
     </div>
-    <div class="member-total" aria-label="{{ totalMembers }} team members">
+    <div
+      class="member-total"
+      [attr.aria-label]="'{{count}} team members' | translate: { count: totalMembers }"
+    >
       <mat-icon aria-hidden="true">groups</mat-icon>
-      <span>{{ totalMembers }} members</span>
+      <span>{{ totalMembers }} {{ 'members' | translate }}</span>
     </div>
   </header>
 
@@ -16,21 +21,24 @@
       <mat-icon aria-hidden="true">search</mat-icon>
       <input
         type="search"
-        aria-label="Search team members"
-        placeholder="Search by name, email, or role"
+        [attr.aria-label]="'Search team members' | translate"
+        [placeholder]="'Search by name, email, or role' | translate"
         (input)="onSearchChange($event)"
       />
     </label>
     <span class="result-count" aria-live="polite">
-      {{ filteredMembers().length }} of {{ totalMembers }} members
+      {{
+        '{{filtered}} of {{total}} members'
+          | translate: { filtered: filteredMembers().length, total: totalMembers }
+      }}
     </span>
   </div>
 
   @if (filteredMembers().length === 0) {
     <div class="empty-state" role="status">
       <mat-icon aria-hidden="true">person_search</mat-icon>
-      <h2>No team members found</h2>
-      <p>Try a different name, email, or role.</p>
+      <h2>{{ 'No team members found' | translate }}</h2>
+      <p>{{ 'Try a different name, email, or role.' | translate }}</p>
     </div>
   } @else {
     <div class="member-grid">
@@ -40,7 +48,7 @@
             <div class="avatar" aria-hidden="true">{{ member.avatar }}</div>
             <div class="member-identity">
               <h2>{{ member.name }}</h2>
-              <p class="member-role">{{ member.role }}</p>
+              <p class="member-role">{{ member.role | translate }}</p>
             </div>
           </div>
 
@@ -49,18 +57,18 @@
             {{ member.email }}
           </a>
 
-          <div class="workload" aria-label="Task workload">
+          <div class="workload" [attr.aria-label]="'Task workload' | translate">
             <div>
               <span class="workload-value">{{ member.openTasks }}</span>
-              <span class="workload-label">Open</span>
+              <span class="workload-label">{{ 'Open' | translate }}</span>
             </div>
             <div>
               <span class="workload-value">{{ member.completedTasks }}</span>
-              <span class="workload-label">Completed</span>
+              <span class="workload-label">{{ 'Completed' | translate }}</span>
             </div>
             <div>
               <span class="workload-value">{{ member.assignedTasks }}</span>
-              <span class="workload-label">Total tasks</span>
+              <span class="workload-label">{{ 'Total tasks' | translate }}</span>
             </div>
           </div>
 
@@ -68,11 +76,11 @@
             mat-stroked-button
             type="button"
             class="assign-button"
-            [attr.aria-label]="'Assign a task to ' + member.name"
+            [attr.aria-label]="'Assign a task to {name}' | translate: { name: member.name }"
             (click)="assignTask(member)"
           >
             <mat-icon>add</mat-icon>
-            Assign task
+            {{ 'Assign task' | translate }}
           </button>
         </article>
       }

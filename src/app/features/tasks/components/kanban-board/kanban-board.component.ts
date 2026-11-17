@@ -10,6 +10,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { KanbanColumnComponent } from '../kanban-column/kanban-column.component';
 import { SkeletonCardComponent } from '@shared/components';
+import { TranslatePipe } from '@app/core/i18n/translate.pipe';
 
 export type KanbanColumnTab = 'all' | 'todo' | 'in_progress' | 'done';
 
@@ -38,7 +39,7 @@ export interface KanbanTaskDrop {
   selector: 'app-kanban-board',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkDropListGroup, KanbanColumnComponent, SkeletonCardComponent],
+  imports: [CdkDropListGroup, KanbanColumnComponent, SkeletonCardComponent, TranslatePipe],
   templateUrl: './kanban-board.component.html',
   styleUrl: './kanban-board.component.scss',
 })
