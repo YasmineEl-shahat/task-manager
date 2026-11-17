@@ -124,6 +124,16 @@ describe('TaskFormComponent', () => {
     });
   });
 
+  describe('Assigning a task to a team member', () => {
+    beforeEach(async () => {
+      await createComponent({ assigneeId: AVAILABLE_ASSIGNEES[1]!.id });
+    });
+
+    it('uses the selected team member as the new task assignee', () => {
+      expect(component.form.controls.assigneeId.value).toBe(AVAILABLE_ASSIGNEES[1]!.id);
+    });
+  });
+
   describe('Edit Mode', () => {
     beforeEach(async () => {
       await createComponent({ task: mockTask });

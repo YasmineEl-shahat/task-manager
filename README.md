@@ -49,6 +49,7 @@ A high-performance, enterprise-grade Task Management application engineered with
 - **Dynamic Task CRUD Operations**: Dialog-based task creation and editing with full form validation, priority assignment, and assignee selection.
 - **Real-Time KPI Dashboard**: Live computation of total tasks, completion rates, in-progress workloads, and overdue items with visual indicators.
 - **Interactive Analytics**: Pure SVG data visualizations including a status distribution donut chart, priority breakdown, and summary metric cards without heavy charting dependencies.
+- **User Management**: Searchable team directory with member contact details and task workload summaries; create tasks directly for a selected member.
 - **Recent Activity Feed**: On-demand timeline of the 20 most recent task updates, creations, assignments, status changes, and deletions. New task changes appear immediately and are saved through the activity API, with relative timestamps, action filters, and visible API errors.
 - **Multi-Factor Search & Filtering**: Client- and server-level reactive filtering across statuses, priority levels, assignees, and real-time debounced text query search.
 - **Resilient Error Recovery**: Centralized error management banner with manual and automatic retry triggers.
@@ -401,11 +402,11 @@ The testing architecture uses **Vitest 4** with **jsdom** for rapid, isolated, a
 
 ### Test Suite Breakdown
 
-The test suite contains **175+ unit tests** across **24 spec files**, achieving complete test coverage of all core paths:
+The test suite contains **185 unit tests** across **25 spec files**, covering the application's core paths:
 
 ```text
 ✓ src/app/app.spec.ts                                            (3 tests)
-✓ src/app/app.routes.spec.ts                                     (4 tests)
+✓ src/app/app.routes.spec.ts                                     (5 tests)
 ✓ src/app/core/http/cache.service.spec.ts                        (5 tests)
 ✓ src/app/core/http/cache.interceptor.spec.ts                    (4 tests)
 ✓ src/app/features/tasks/store/task.store.spec.ts                (31 tests)
@@ -416,7 +417,8 @@ The test suite contains **175+ unit tests** across **24 spec files**, achieving 
 ✓ src/app/features/tasks/components/kanban-column.component.spec (7 tests)
 ✓ src/app/features/tasks/components/task-card.component.spec     (7 tests)
 ✓ src/app/features/tasks/components/task-filter.component.spec   (8 tests)
-✓ src/app/features/tasks/components/task-form.component.spec     (9 tests)
+✓ src/app/features/tasks/components/task-form.component.spec   (10 tests)
+✓ src/app/features/team/pages/team-page/team-page.component.spec (5 tests)
 ✓ src/app/features/dashboard/dashboard-page.component.spec       (12 tests)
 ✓ src/app/features/analytics/analytics-page.component.spec       (9 tests)
 ✓ src/app/layout/main-layout/main-layout.component.spec          (5 tests)

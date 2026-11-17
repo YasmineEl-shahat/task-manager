@@ -1,0 +1,81 @@
+<section class="team-page" aria-labelledby="team-title">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">People</p>
+      <h1 id="team-title">Team</h1>
+      <p class="page-description">Manage your team and assign work to the right people.</p>
+    </div>
+    <div class="member-total" aria-label="{{ totalMembers }} team members">
+      <mat-icon aria-hidden="true">groups</mat-icon>
+      <span>{{ totalMembers }} members</span>
+    </div>
+  </header>
+
+  <div class="team-toolbar">
+    <label class="search-field">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input
+        type="search"
+        aria-label="Search team members"
+        placeholder="Search by name, email, or role"
+        (input)="onSearchChange($event)"
+      />
+    </label>
+    <span class="result-count" aria-live="polite">
+      {{ filteredMembers().length }} of {{ totalMembers }} members
+    </span>
+  </div>
+
+  @if (filteredMembers().length === 0) {
+    <div class="empty-state" role="status">
+      <mat-icon aria-hidden="true">person_search</mat-icon>
+      <h2>No team members found</h2>
+      <p>Try a different name, email, or role.</p>
+    </div>
+  } @else {
+    <div class="member-grid">
+      @for (member of filteredMembers(); track member.id) {
+        <article class="member-card">
+          <div class="member-details">
+            <div class="avatar" aria-hidden="true">{{ member.avatar }}</div>
+            <div class="member-identity">
+              <h2>{{ member.name }}</h2>
+              <p class="member-role">{{ member.role }}</p>
+            </div>
+          </div>
+
+          <a class="member-email" [href]="'mailto:' + member.email">
+            <mat-icon aria-hidden="true">mail_outline</mat-icon>
+            {{ member.email }}
+          </a>
+
+          <div class="workload" aria-label="Task workload">
+            <div>
+              <span class="workload-value">{{ member.openTasks }}</span>
+              <span class="workload-label">Open</span>
+            </div>
+            <div>
+              <span class="workload-value">{{ member.completedTasks }}</span>
+              <span class="workload-label">Completed</span>
+            </div>
+            <div>
+              <span class="workload-value">{{ member.assignedTasks }}</span>
+              <span class="workload-label">Total tasks</span>
+            </div>
+          </div>
+
+          <button
+            mat-stroked-button
+            type="button"
+            class="assign-button"
+            [attr.aria-label]="'Assign a task to ' + member.name"
+            (click)="assignTask(member)"
+          >
+            <mat-icon>add</mat-icon>
+            Assign task
+          </button>
+        </article>
+      }
+    </div>
+  }
+</section>

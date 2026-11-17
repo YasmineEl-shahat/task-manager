@@ -42,6 +42,11 @@ describe('App Routes and Lazy Navigation', () => {
     expect(location.path()).toBe('/tasks');
   }, 30000);
 
+  it('navigates to the team management route', async () => {
+    await router.navigateByUrl('/team');
+    expect(location.path()).toBe('/team');
+  }, 30000);
+
   it('redirects unknown wildcards "**" to "/dashboard"', async () => {
     await router.navigateByUrl('/some/non-existent/route');
     expect(location.path()).toBe('/dashboard');

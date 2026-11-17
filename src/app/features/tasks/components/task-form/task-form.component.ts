@@ -10,23 +10,16 @@ import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
 import { Assignee, Task } from '@tasks/models/task.model';
 import { CreateTaskDto } from '@tasks/models/task.dto';
 import { TaskStore } from '@tasks/store/task.store';
+import { TEAM_MEMBERS } from '@features/team/data/team-members.data';
 
 export interface TaskFormData {
   task?: Task;
+  assigneeId?: string;
 }
 
-export const AVAILABLE_ASSIGNEES: Assignee[] = [
-  { id: 'user-1', name: 'Sarah', avatar: 'SS', email: 'sarah@example.com' },
-  { id: 'user-2', name: 'John', avatar: 'JD', email: 'john@example.com' },
-  { id: 'user-3', name: 'Mike', avatar: 'MJ', email: 'mike@example.com' },
-];
+export const AVAILABLE_ASSIGNEES: Assignee[] = [...TEAM_MEMBERS];
 
-const DEFAULT_ASSIGNEE: Assignee = AVAILABLE_ASSIGNEES[0] ?? {
-  id: 'user-1',
-  name: 'Sarah',
-  avatar: 'SS',
-  email: 'sarah@example.com',
-};
+const DEFAULT_ASSIGNEE: Assignee = AVAILABLE_ASSIGNEES[0]!;
 
 @Component({
   selector: 'app-task-form',
@@ -73,7 +66,10 @@ export class TaskFormComponent {
       this.data.task?.dueDate ? this.data.task.dueDate.split('T')[0] : this.defaultDueDate,
       [Validators.required],
     ],
-    assigneeId: [this.data.task?.assignee?.id ?? DEFAULT_ASSIGNEE.id, [Validators.required]],
+    assigneeId: [
+      this.data.task?.assignee?.id ?? this.data.assigneeId ?? DEFAULT_ASSIGNEE.id,
+      [Validators.required],
+    ],
     tags: [this.data.task?.tags?.join(', ') ?? ''],
   });
 

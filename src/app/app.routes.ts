@@ -41,9 +41,7 @@ export const routes: Routes = [
   {
     path: 'team',
     loadComponent: () =>
-      import('@features/dashboard/pages/dashboard-page/dashboard-page.component').then(
-        (m) => m.DashboardPageComponent,
-      ),
+      import('@features/team/pages/team-page/team-page.component').then((m) => m.TeamPageComponent),
     title: 'Team | Task Manager',
   },
   {
