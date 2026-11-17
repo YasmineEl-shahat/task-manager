@@ -1,0 +1,140 @@
+<div class="activity-feed" role="region" aria-label="Recent Activity Feed">
+  <!-- ── 1. Header ─────────────────────────────────────────────────────────── -->
+  <header class="feed-header">
+    <div class="feed-title-wrapper">
+      <div class="header-icon-container">
+        <mat-icon class="header-icon">history</mat-icon>
+      </div>
+      <h2 class="feed-title">{{ title() }}</h2>
+      <span class="count-badge" [attr.aria-label]="effectiveActivities().length + ' activities'">
+        {{ effectiveActivities().length }}
+      </span>
+    </div>
+
+    <div class="header-actions">
+      @if (activities() === null && effectiveActivities().length > 0) {
+        <button
+          type="button"
+          class="clear-btn"
+          (click)="onClearAll()"
+          title="Clear activity history"
+          aria-label="Clear activity history"
+        >
+          Clear
+        </button>
+      }
+
+      @if (showClose()) {
+        <button
+          mat-icon-button
+          type="button"
+          class="close-btn"
+          (click)="closeFeed.emit()"
+          title="Close activity feed"
+          aria-label="Close activity feed"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- ── 2. Filters ────────────────────────────────────────────────────────── -->
+  @if (showFilters()) {
+    <nav class="feed-filters" aria-label="Filter activities by action">
+      @for (option of filterOptions; track option.id) {
+        <button
+          type="button"
+          class="filter-chip"
+          [class.active]="selectedFilter() === option.id"
+          (click)="setFilter(option.id)"
+          [attr.aria-pressed]="selectedFilter() === option.id"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </nav>
+  }
+
+  <!-- ── 3. Activity List ─────────────────────────────────────────────────── -->
+  @if (store.activityError()) {
+    <p class="feed-error" role="alert">{{ store.activityError() }}</p>
+  }
+
+  <div class="feed-content" role="feed" [attr.aria-busy]="store.isLoadingActivities()">
+    @if (filteredActivities().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon-container">
+          <mat-icon class="empty-icon">history_toggle_off</mat-icon>
+        </div>
+        @if (selectedFilter() === 'all') {
+          <h3 class="empty-title">No recent activity</h3>
+          <p class="empty-desc">
+            Task creations, status updates, and edits will appear here in real time.
+          </p>
+        } @else {
+          <h3 class="empty-title">No matching activity</h3>
+          <p class="empty-desc">
+            There are no activities matching the "{{ selectedFilter() }}" filter.
+          </p>
+          <button type="button" class="reset-filter-btn" (click)="setFilter('all')">
+            Show all activities
+          </button>
+        }
+      </div>
+    } @else {
+      <ul class="activity-timeline" role="list">
+        @for (activity of filteredActivities(); track activity.id) {
+          <li
+            class="timeline-item"
+            [class.clickable]="activity.action !== ActivityAction.DELETED"
+            (click)="onActivityClick(activity)"
+            (keydown.enter)="onActivityClick(activity)"
+            (keydown.space)="$event.preventDefault(); onActivityClick(activity)"
+            [attr.tabindex]="activity.action !== ActivityAction.DELETED ? 0 : -1"
+            [attr.role]="activity.action !== ActivityAction.DELETED ? 'button' : 'article'"
+            [attr.aria-label]="activity.description"
+          >
+            <!-- Timeline Icon & Avatar -->
+            <div class="avatar-col">
+              <div class="user-avatar" [title]="activity.performedBy">
+                <span class="user-initials">{{ getInitials(activity.performedBy) }}</span>
+              </div>
+              <div
+                class="action-icon-badge"
+                [class]="getActionBadgeClass(activity.action)"
+                [title]="getActionLabel(activity.action)"
+              >
+                <mat-icon class="action-icon">{{ getActionIcon(activity.action) }}</mat-icon>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content-col">
+              <div class="item-meta">
+                <span class="performer-name">{{ activity.performedBy }}</span>
+                <span class="action-tag" [class]="getActionBadgeClass(activity.action)">
+                  {{ getActionLabel(activity.action) }}
+                </span>
+                <span class="timestamp" [title]="activity.createdAt">
+                  {{ activity.createdAt | timeAgo }}
+                </span>
+              </div>
+
+              <p class="activity-description">
+                {{ activity.description }}
+              </p>
+            </div>
+
+            <!-- View Action Indicator (non-deleted tasks) -->
+            @if (activity.action !== ActivityAction.DELETED) {
+              <div class="view-indicator" title="View task">
+                <mat-icon class="arrow-icon">chevron_right</mat-icon>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

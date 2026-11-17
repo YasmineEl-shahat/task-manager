@@ -46,9 +46,15 @@
       mat-icon-button
       type="button"
       class="action-btn notification-btn"
-      aria-label="View notifications"
+      aria-label="View recent activity"
+      (click)="notificationClick.emit()"
     >
       <mat-icon class="bell-icon">notifications</mat-icon>
+      @if (activityCount() > 0) {
+        <span class="notification-badge" [attr.aria-label]="activityCount() + ' activities'">
+          {{ activityCount() > 99 ? '99+' : activityCount() }}
+        </span>
+      }
     </button>
 
     <div class="user-avatar" title="John Doe">

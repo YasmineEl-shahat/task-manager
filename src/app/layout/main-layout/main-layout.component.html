@@ -1,5 +1,9 @@
 <div class="layout-container">
-  <app-topbar (searchChange)="onGlobalSearch($event)" />
+  <app-topbar
+    (searchChange)="onGlobalSearch($event)"
+    (notificationClick)="store.toggleActivityPanel()"
+    [activityCount]="store.activities().length"
+  />
 
   <div class="layout-body">
     <app-sidebar class="layout-sidebar" (createNewTask)="openCreateTaskModal()" />
@@ -8,4 +12,20 @@
       <router-outlet />
     </main>
   </div>
+
+  <!-- Slide-over Recent Activity Drawer -->
+  @if (store.isActivityPanelOpen()) {
+    <div
+      class="activity-drawer-backdrop"
+      (click)="store.closeActivityPanel()"
+      role="presentation"
+    ></div>
+    <aside class="activity-drawer" role="complementary" aria-label="Recent Activity Feed">
+      <app-activity-feed
+        [showClose]="true"
+        (closeFeed)="store.closeActivityPanel()"
+        (taskClick)="onActivityTaskClick($event)"
+      />
+    </aside>
+  }
 </div>

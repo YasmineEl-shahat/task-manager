@@ -57,6 +57,22 @@
         </mat-select>
       </mat-form-field>
 
+      <!-- Activity Feed Toggle Button -->
+      <button
+        type="button"
+        class="activity-toggle-btn"
+        [class.active]="store.isActivityPanelOpen()"
+        (click)="toggleActivityFeed()"
+        aria-label="Toggle Recent Activity Feed"
+        [attr.aria-expanded]="store.isActivityPanelOpen()"
+      >
+        <mat-icon class="activity-btn-icon">history</mat-icon>
+        <span>Activity</span>
+        @if (store.activities().length > 0) {
+          <span class="activity-badge">{{ store.activities().length }}</span>
+        }
+      </button>
+
       <!-- + New Task Button -->
       <button
         mat-flat-button

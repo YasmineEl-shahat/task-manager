@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
@@ -74,6 +74,10 @@ describe('DashboardPageComponent', () => {
     }),
     isLoading: signal(false),
     error: signal<string | null>(null),
+    activities: signal([]),
+    tasks: signal(mockTasks),
+    isActivityPanelOpen: signal(false),
+    toggleActivityPanel: vi.fn(),
     setFilters: vi.fn(),
     selectTask: vi.fn(),
     deleteTask: vi.fn(),
@@ -89,18 +93,15 @@ describe('DashboardPageComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [DashboardPageComponent],
-      providers: [
-        provideAnimationsAsync(),
-        { provide: TaskStore, useValue: mockStore },
-      ],
+      providers: [provideAnimationsAsync(), { provide: TaskStore, useValue: mockStore }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DashboardPageComponent);
     component = fixture.componentInstance;
-    dialog = (component as any).dialog;
+    dialog = (component as unknown as { dialog: MatDialog }).dialog;
     vi.spyOn(dialog, 'open').mockReturnValue({
       afterClosed: () => of(true),
-    } as any);
+    } as unknown as MatDialogRef<unknown>);
 
     fixture.detectChanges();
   });
@@ -109,8 +110,8 @@ describe('DashboardPageComponent', () => {
     const statCards = fixture.debugElement.queryAll(By.css('.stat-card'));
     expect(statCards.length).toBe(4);
 
-    const values = statCards.map(
-      (c) => c.query(By.css('.stat-value')).nativeElement.textContent.trim(),
+    const values = statCards.map((c) =>
+      c.query(By.css('.stat-value')).nativeElement.textContent.trim(),
     );
     expect(values).toEqual(['156', '89', '42', '25']);
   });
@@ -177,5 +178,15 @@ describe('DashboardPageComponent', () => {
 
     const errorBanner = fixture.debugElement.query(By.css('app-error-banner'));
     expect(errorBanner).toBeTruthy();
+  });
+
+  it('toggles activity panel on toggleActivityFeed', () => {
+    component.toggleActivityFeed();
+    expect(mockStore.toggleActivityPanel).toHaveBeenCalled();
+  });
+
+  it('opens task edit modal on onActivityTaskClick', async () => {
+    await component.onActivityTaskClick(mockTasks[0]!.id);
+    expect(dialog.open).toHaveBeenCalled();
   });
 });

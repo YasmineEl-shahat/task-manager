@@ -7,9 +7,11 @@ import { environment } from '@env';
 import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
 import { CreateTaskDto, UpdateTaskDto } from '@tasks/models/task.dto';
+import { ActivityAction, TaskActivity } from '@tasks/models/task-activity.model';
 import { TaskApiService } from './task-api.service';
 
 const BASE_URL = `${environment.apiBaseUrl}/tasks`;
+const ACTIVITIES_URL = `${environment.apiBaseUrl}/activities`;
 
 // ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -119,20 +121,81 @@ describe('TaskApiService — mutations', () => {
     });
   });
 
+  // ─── Activities ──────────────────────────────────────────────────────────
+
+  describe('getActivities()', () => {
+    it('sends GET to activitiesUrl and returns the list of activities', () => {
+      const mockActivities: TaskActivity[] = [
+        {
+          id: 'act-1',
+          taskId: 'task-1',
+          taskTitle: 'Test Task',
+          action: ActivityAction.CREATED,
+          performedBy: 'Alice',
+          description: 'Created task "Test Task"',
+          createdAt: '2026-11-17T00:00:00.000Z',
+        },
+      ];
+
+      service.getActivities().subscribe((result) => {
+        expect(result).toEqual(mockActivities);
+      });
+
+      const req = httpMock.expectOne(ACTIVITIES_URL);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockActivities);
+    });
+  });
+
+  describe('logActivity()', () => {
+    it('sends POST to activitiesUrl with payload and returns created activity', () => {
+      const payload: Partial<TaskActivity> = {
+        taskId: 'task-1',
+        taskTitle: 'Test Task',
+        action: ActivityAction.UPDATED,
+        performedBy: 'Alice',
+        description: 'Updated task',
+      };
+      const created: TaskActivity = {
+        id: 'act-new',
+        taskId: 'task-1',
+        taskTitle: 'Test Task',
+        action: ActivityAction.UPDATED,
+        performedBy: 'Alice',
+        description: 'Updated task',
+        createdAt: '2026-11-17T00:00:00.000Z',
+      };
+
+      service.logActivity(payload).subscribe((result) => {
+        expect(result).toEqual(created);
+      });
+
+      const req = httpMock.expectOne(ACTIVITIES_URL);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(created);
+    });
+  });
+
   // ─── Error handling ───────────────────────────────────────────────────────
 
   describe('error handling', () => {
     it('emits an Error with a connectivity message on network failure (status 0)', () => {
-      service.createTask({
-        title: 'x', description: '', status: TaskStatus.TODO, priority: TaskPriority.LOW,
-        dueDate: '2099-01-01',
-        assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'bob@test.com' },
-        tags: [],
-      }).subscribe({
-        error: (err: Error) => {
-          expect(err.message).toContain('Unable to reach the server');
-        },
-      });
+      service
+        .createTask({
+          title: 'x',
+          description: '',
+          status: TaskStatus.TODO,
+          priority: TaskPriority.LOW,
+          dueDate: '2099-01-01',
+          assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'bob@test.com' },
+          tags: [],
+        })
+        .subscribe({
+          error: (err: Error) => {
+            expect(err.message).toContain('Unable to reach the server');
+          },
+        });
 
       httpMock.expectOne(BASE_URL).error(new ProgressEvent('error'));
     });

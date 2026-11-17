@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '@env';
 import { CreateTaskDto, UpdateTaskDto } from '@tasks/models/task.dto';
 import { Task } from '@tasks/models/task.model';
+import { TaskActivity } from '@tasks/models/task-activity.model';
 
 /**
  * Service responsible for Task **mutation** operations (POST / PUT / PATCH / DELETE).
@@ -20,6 +21,7 @@ import { Task } from '@tasks/models/task.model';
 export class TaskApiService {
   private readonly http = inject(HttpClient);
   readonly baseUrl = `${environment.apiBaseUrl}/tasks`;
+  readonly activitiesUrl = `${environment.apiBaseUrl}/activities`;
 
   // ─── Create ──────────────────────────────────────────────────────────────
 
@@ -30,9 +32,7 @@ export class TaskApiService {
    * @returns Observable wrapping the newly created {@link Task}.
    */
   createTask(dto: CreateTaskDto): Observable<Task> {
-    return this.http
-      .post<Task>(this.baseUrl, dto)
-      .pipe(catchError(this.handleError));
+    return this.http.post<Task>(this.baseUrl, dto).pipe(catchError(this.handleError));
   }
 
   // ─── Update ──────────────────────────────────────────────────────────────
@@ -45,9 +45,7 @@ export class TaskApiService {
    * @returns Observable wrapping the updated {@link Task}.
    */
   updateTask(id: string, dto: CreateTaskDto): Observable<Task> {
-    return this.http
-      .put<Task>(`${this.baseUrl}/${id}`, dto)
-      .pipe(catchError(this.handleError));
+    return this.http.put<Task>(`${this.baseUrl}/${id}`, dto).pipe(catchError(this.handleError));
   }
 
   /**
@@ -58,9 +56,7 @@ export class TaskApiService {
    * @returns Observable wrapping the updated {@link Task}.
    */
   patchTask(id: string, dto: UpdateTaskDto): Observable<Task> {
-    return this.http
-      .patch<Task>(`${this.baseUrl}/${id}`, dto)
-      .pipe(catchError(this.handleError));
+    return this.http.patch<Task>(`${this.baseUrl}/${id}`, dto).pipe(catchError(this.handleError));
   }
 
   // ─── Delete ──────────────────────────────────────────────────────────────
@@ -72,8 +68,29 @@ export class TaskApiService {
    * @returns Observable that completes with `void` on success.
    */
   deleteTask(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(catchError(this.handleError));
+  }
+
+  // ─── Activities ──────────────────────────────────────────────────────────
+
+  /**
+   * Fetches recent task activities.
+   *
+   * @returns Observable wrapping the list of {@link TaskActivity}.
+   */
+  getActivities(): Observable<TaskActivity[]> {
+    return this.http.get<TaskActivity[]>(this.activitiesUrl).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Logs a new task activity.
+   *
+   * @param activity - Activity payload to create.
+   * @returns Observable wrapping the logged {@link TaskActivity}.
+   */
+  logActivity(activity: Partial<TaskActivity>): Observable<TaskActivity> {
     return this.http
-      .delete<void>(`${this.baseUrl}/${id}`)
+      .post<TaskActivity>(this.activitiesUrl, activity)
       .pipe(catchError(this.handleError));
   }
 

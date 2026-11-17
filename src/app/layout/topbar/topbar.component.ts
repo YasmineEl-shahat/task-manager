@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -21,6 +16,12 @@ import { MatIconModule } from '@angular/material/icon';
 export class TopbarComponent {
   readonly searchQuery = input<string>('');
   readonly searchChange = output<string>();
+
+  /** Number of activities to display in the notification badge. */
+  readonly activityCount = input<number>(0);
+
+  /** Emitted when the notification button is clicked. */
+  readonly notificationClick = output<void>();
 
   protected onSearchInput(event: Event): void {
     const input = event.target as HTMLInputElement;

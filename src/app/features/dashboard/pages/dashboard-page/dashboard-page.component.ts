@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -128,7 +122,7 @@ export class DashboardPageComponent {
   readonly todoTasks = computed(() =>
     this.store.filteredTasks().filter((t) => t.status === TaskStatus.TODO),
   );
- 
+
   readonly inProgressTasks = computed(() =>
     this.store.filteredTasks().filter((t) => t.status === TaskStatus.IN_PROGRESS),
   );
@@ -149,10 +143,19 @@ export class DashboardPageComponent {
     this.store.selectTask(taskId);
   }
 
+  toggleActivityFeed(): void {
+    this.store.toggleActivityPanel();
+  }
+
+  async onActivityTaskClick(taskId: string): Promise<void> {
+    const task = this.store.tasks().find((t) => t.id === taskId);
+    if (task) {
+      await this.onTaskEdit(task);
+    }
+  }
+
   async openCreateModal(): Promise<void> {
-    const { TaskFormComponent } = await import(
-      '@tasks/components/task-form/task-form.component'
-    );
+    const { TaskFormComponent } = await import('@tasks/components/task-form/task-form.component');
     this.dialog.open(TaskFormComponent, {
       width: '560px',
       maxWidth: '95vw',
@@ -161,9 +164,7 @@ export class DashboardPageComponent {
   }
 
   async onTaskEdit(task: Task): Promise<void> {
-    const { TaskFormComponent } = await import(
-      '@tasks/components/task-form/task-form.component'
-    );
+    const { TaskFormComponent } = await import('@tasks/components/task-form/task-form.component');
     this.dialog.open(TaskFormComponent, {
       width: '560px',
       maxWidth: '95vw',

@@ -49,4 +49,25 @@ describe('TopbarComponent', () => {
     const brandIcon = brandLogo?.querySelector('svg');
     expect(brandIcon).toBeTruthy();
   });
+
+  it('emits notificationClick when notification button is clicked', () => {
+    const spy = vi.fn();
+    component.notificationClick.subscribe(spy);
+
+    const btn = fixture.debugElement.query(By.css('.notification-btn'));
+    btn.nativeElement.click();
+
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('displays activity count badge when activityCount > 0', () => {
+    expect(fixture.debugElement.query(By.css('.notification-badge'))).toBeNull();
+
+    fixture.componentRef.setInput('activityCount', 5);
+    fixture.detectChanges();
+
+    const badge = fixture.debugElement.query(By.css('.notification-badge'));
+    expect(badge).toBeTruthy();
+    expect(badge.nativeElement.textContent).toContain('5');
+  });
 });

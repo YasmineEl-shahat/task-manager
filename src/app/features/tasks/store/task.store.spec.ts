@@ -4,13 +4,20 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { environment } from '@env';
-import { TaskFilterPriority, TaskFilterStatus, TaskPriority, TaskStatus } from '@tasks/models/task.enums';
+import {
+  TaskFilterPriority,
+  TaskFilterStatus,
+  TaskPriority,
+  TaskStatus,
+} from '@tasks/models/task.enums';
+import { ActivityAction, TaskActivity } from '@tasks/models/task-activity.model';
 import { Task } from '@tasks/models/task.model';
 import { TaskApiService } from '@tasks/services/task-api.service';
 import { TasksResponse } from '@tasks/models/tasks-response.model';
 import { TaskStore } from './task.store';
 
 const BASE_URL = `${environment.apiBaseUrl}/tasks`;
+const ACTIVITIES_URL = `${environment.apiBaseUrl}/activities`;
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -65,6 +72,22 @@ async function flushTaskList(httpMock: HttpTestingController, tasks: Task[] = []
   await drainMicrotasks();
   // Run effects so signal writes from the resource propagate
   TestBed.flushEffects();
+  await drainMicrotasks();
+}
+
+async function flushActivityHistory(
+  httpMock: HttpTestingController,
+  activities: TaskActivity[] = [],
+): Promise<void> {
+  const request = httpMock.expectOne((r) => r.url === ACTIVITIES_URL && r.method === 'GET');
+  request.flush(activities);
+  await drainMicrotasks();
+}
+
+async function flushActivityWrite(httpMock: HttpTestingController): Promise<void> {
+  await drainMicrotasks();
+  const request = httpMock.expectOne((r) => r.url === ACTIVITIES_URL && r.method === 'POST');
+  request.flush(request.request.body);
   await drainMicrotasks();
 }
 
@@ -245,7 +268,10 @@ describe('TaskStore', () => {
       await flushTaskList(httpMock);
 
       store.createTask({
-        title: 'New', description: '', status: TaskStatus.TODO, priority: TaskPriority.LOW,
+        title: 'New',
+        description: '',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.LOW,
         dueDate: '2099-01-01',
         assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'b@test.com' },
         tags: [],
@@ -257,6 +283,7 @@ describe('TaskStore', () => {
       post.flush(makeTask({ id: 'task-new' }));
 
       await drainMicrotasks();
+      await flushActivityWrite(httpMock);
 
       // Store reloads after create
       await flushTaskList(httpMock, [makeTask(), makeTask({ id: 'task-new' })]);
@@ -269,7 +296,10 @@ describe('TaskStore', () => {
       await flushTaskList(httpMock);
 
       store.createTask({
-        title: 'x', description: '', status: TaskStatus.TODO, priority: TaskPriority.LOW,
+        title: 'x',
+        description: '',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.LOW,
         dueDate: '2099-01-01',
         assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'b@test.com' },
         tags: [],
@@ -301,6 +331,7 @@ describe('TaskStore', () => {
         .flush(makeTask({ title: 'Updated' }));
 
       await drainMicrotasks();
+      await flushActivityWrite(httpMock);
 
       await flushTaskList(httpMock, [makeTask({ title: 'Updated' })]);
       expect(store.tasks()[0]?.title).toBe('Updated');
@@ -320,6 +351,7 @@ describe('TaskStore', () => {
         .flush(makeTask({ status: TaskStatus.IN_PROGRESS }));
 
       await drainMicrotasks();
+      await flushActivityWrite(httpMock);
 
       await flushTaskList(httpMock, [makeTask({ status: TaskStatus.IN_PROGRESS })]);
       expect(store.tasks()[0]?.status).toBe(TaskStatus.IN_PROGRESS);
@@ -344,6 +376,7 @@ describe('TaskStore', () => {
         .flush(null);
 
       await drainMicrotasks();
+      await flushActivityWrite(httpMock);
 
       await flushTaskList(httpMock, []);
 
@@ -366,7 +399,9 @@ describe('TaskStore', () => {
       await drainMicrotasks();
 
       // Flush the re-fetch triggered by filter change
-      const req = httpMock.expectOne((r) => r.url === BASE_URL && r.params.get('status') === 'done');
+      const req = httpMock.expectOne(
+        (r) => r.url === BASE_URL && r.params.get('status') === 'done',
+      );
       req.flush(makeResponse([makeTask({ id: '2', status: TaskStatus.DONE })]));
       await drainMicrotasks();
       TestBed.flushEffects();
@@ -387,7 +422,9 @@ describe('TaskStore', () => {
       await drainMicrotasks();
 
       // Flush re-fetch (server also gets search param)
-      const req = httpMock.expectOne((r) => r.url === BASE_URL && r.params.get('search') === 'login');
+      const req = httpMock.expectOne(
+        (r) => r.url === BASE_URL && r.params.get('search') === 'login',
+      );
       req.flush(makeResponse([makeTask({ id: '1', title: 'Fix login bug' })]));
       await drainMicrotasks();
       TestBed.flushEffects();
@@ -446,7 +483,10 @@ describe('TaskStore', () => {
       await flushTaskList(httpMock);
 
       store.createTask({
-        title: 'x', description: '', status: TaskStatus.TODO, priority: TaskPriority.LOW,
+        title: 'x',
+        description: '',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.LOW,
         dueDate: '2099-01-01',
         assignee: { id: 'u1', name: 'Bob', avatar: 'BO', email: 'b@test.com' },
         tags: [],
@@ -464,6 +504,239 @@ describe('TaskStore', () => {
 
       store.clearError();
       expect(store.error()).toBeNull();
+    });
+  });
+
+  // ─── Activity Feed & Logging ──────────────────────────────────────────────
+
+  describe('activities & activity panel', () => {
+    it('starts with initial seed activities and closed panel', async () => {
+      await flushTaskList(httpMock);
+
+      expect(store.activities().length).toBeGreaterThan(0);
+      expect(store.recentActivities().length).toBeGreaterThan(0);
+      expect(store.isActivityPanelOpen()).toBe(false);
+    });
+
+    it('loads activity history once and orders it newest first', async () => {
+      await flushTaskList(httpMock);
+      store.openActivityPanel();
+
+      const activities: TaskActivity[] = [
+        {
+          id: 'act-old',
+          taskId: 'task-1',
+          taskTitle: 'Old task',
+          action: ActivityAction.UPDATED,
+          performedBy: 'Alice',
+          description: 'Updated old task',
+          createdAt: '2026-11-16T10:00:00.000Z',
+        },
+        {
+          id: 'act-new',
+          taskId: 'task-2',
+          taskTitle: 'New task',
+          action: ActivityAction.CREATED,
+          performedBy: 'Bob',
+          description: 'Created new task',
+          createdAt: '2026-11-17T10:00:00.000Z',
+        },
+      ];
+
+      await flushActivityHistory(httpMock, activities);
+
+      expect(store.isLoadingActivities()).toBe(false);
+      expect(store.activities().map((activity) => activity.id)).toEqual(['act-new', 'act-old']);
+
+      store.closeActivityPanel();
+      store.openActivityPanel();
+      httpMock.expectNone((r) => r.url === ACTIVITIES_URL && r.method === 'GET');
+    });
+
+    it('surfaces errors when activity history cannot be loaded', async () => {
+      await flushTaskList(httpMock);
+      store.openActivityPanel();
+
+      httpMock
+        .expectOne((r) => r.url === ACTIVITIES_URL && r.method === 'GET')
+        .flush(
+          { message: 'Activity history unavailable' },
+          { status: 503, statusText: 'Unavailable' },
+        );
+      await drainMicrotasks();
+
+      expect(store.isLoadingActivities()).toBe(false);
+      expect(store.activityError()).toBe('Activity history unavailable');
+    });
+
+    it('toggles, opens, and closes the activity panel', async () => {
+      await flushTaskList(httpMock);
+
+      store.toggleActivityPanel();
+      expect(store.isActivityPanelOpen()).toBe(true);
+      await flushActivityHistory(httpMock);
+
+      store.toggleActivityPanel();
+      expect(store.isActivityPanelOpen()).toBe(false);
+
+      store.openActivityPanel();
+      expect(store.isActivityPanelOpen()).toBe(true);
+
+      store.closeActivityPanel();
+      expect(store.isActivityPanelOpen()).toBe(false);
+    });
+
+    it('allows manually logging an activity at the top of the list', async () => {
+      await flushTaskList(httpMock);
+      const initialCount = store.activities().length;
+
+      const logged = store.logActivity(
+        ActivityAction.CREATED,
+        'task-99',
+        'Custom Task',
+        'Created custom task',
+        'Tester',
+      );
+
+      expect(store.activities().length).toBe(initialCount + 1);
+      expect(store.activities()[0]).toEqual(logged);
+      expect(logged.action).toBe(ActivityAction.CREATED);
+      expect(logged.taskTitle).toBe('Custom Task');
+      await flushActivityWrite(httpMock);
+    });
+
+    it('surfaces errors when an activity cannot be saved', async () => {
+      await flushTaskList(httpMock);
+      store.logActivity(ActivityAction.UPDATED, 'task-99', 'Custom Task', 'Updated custom task');
+
+      const request = httpMock.expectOne((r) => r.url === ACTIVITIES_URL && r.method === 'POST');
+      request.flush(
+        { message: 'Activity service unavailable' },
+        { status: 503, statusText: 'Unavailable' },
+      );
+      await drainMicrotasks();
+
+      expect(store.activityError()).toBe('Activity service unavailable');
+    });
+
+    it('clears and loads activities', async () => {
+      await flushTaskList(httpMock);
+
+      store.clearActivities();
+      expect(store.activities()).toHaveLength(0);
+
+      store.loadActivities([
+        {
+          id: 'act-1',
+          taskId: 't-1',
+          taskTitle: 'Hydrated Task',
+          action: ActivityAction.UPDATED,
+          performedBy: 'Alice',
+          description: 'Updated hydrated task',
+          createdAt: '2026-11-17T00:00:00.000Z',
+        },
+      ]);
+      expect(store.activities()).toHaveLength(1);
+      expect(store.activities()[0]?.taskTitle).toBe('Hydrated Task');
+    });
+
+    it('automatically logs CREATED activity on createTask()', async () => {
+      await flushTaskList(httpMock);
+
+      store.createTask({
+        title: 'New Automated Task',
+        description: 'desc',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.LOW,
+        dueDate: '2099-01-01',
+        assignee: { id: 'u1', name: 'Alice', avatar: 'AL', email: 'alice@test.com' },
+        tags: [],
+      });
+
+      await drainMicrotasks();
+
+      const post = httpMock.expectOne((r) => r.method === 'POST' && r.url === BASE_URL);
+      post.flush(makeTask({ id: 'task-created', title: 'New Automated Task' }));
+
+      await drainMicrotasks();
+      await flushActivityWrite(httpMock);
+      await flushTaskList(httpMock);
+
+      const latestActivity = store.activities()[0]!;
+      expect(latestActivity.action).toBe(ActivityAction.CREATED);
+      expect(latestActivity.taskTitle).toBe('New Automated Task');
+      expect(latestActivity.description).toContain('Created task "New Automated Task"');
+    });
+
+    it('automatically logs UPDATED activity on updateTask()', async () => {
+      await flushTaskList(httpMock);
+
+      store.updateTask('task-1', {
+        title: 'Updated Title',
+        description: 'new desc',
+        status: TaskStatus.IN_PROGRESS,
+        priority: TaskPriority.HIGH,
+        dueDate: '2099-01-01',
+        assignee: { id: 'u1', name: 'Alice', avatar: 'AL', email: 'alice@test.com' },
+        tags: [],
+      });
+
+      await drainMicrotasks();
+
+      const put = httpMock.expectOne((r) => r.method === 'PUT' && r.url === `${BASE_URL}/task-1`);
+      put.flush(makeTask({ id: 'task-1', title: 'Updated Title' }));
+
+      await drainMicrotasks();
+      await flushActivityWrite(httpMock);
+      await flushTaskList(httpMock);
+
+      const latestActivity = store.activities()[0]!;
+      expect(latestActivity.action).toBe(ActivityAction.UPDATED);
+      expect(latestActivity.taskTitle).toBe('Updated Title');
+      expect(latestActivity.description).toContain('Updated details for "Updated Title"');
+    });
+
+    it('automatically logs STATUS_CHANGED activity on patchTask() with status', async () => {
+      await flushTaskList(httpMock);
+
+      store.patchTask('task-1', { status: TaskStatus.DONE });
+
+      await drainMicrotasks();
+
+      const patch = httpMock.expectOne(
+        (r) => r.method === 'PATCH' && r.url === `${BASE_URL}/task-1`,
+      );
+      patch.flush(makeTask({ id: 'task-1', title: 'Task One', status: TaskStatus.DONE }));
+
+      await drainMicrotasks();
+      await flushActivityWrite(httpMock);
+      await flushTaskList(httpMock);
+
+      const latestActivity = store.activities()[0]!;
+      expect(latestActivity.action).toBe(ActivityAction.STATUS_CHANGED);
+      expect(latestActivity.description).toContain('Changed status to Done for "Task One"');
+    });
+
+    it('automatically logs DELETED activity on deleteTask()', async () => {
+      await flushTaskList(httpMock, [makeTask({ id: 'task-del', title: 'Task To Delete' })]);
+
+      store.deleteTask('task-del');
+
+      await drainMicrotasks();
+
+      const del = httpMock.expectOne(
+        (r) => r.method === 'DELETE' && r.url === `${BASE_URL}/task-del`,
+      );
+      del.flush(null);
+
+      await drainMicrotasks();
+      await flushActivityWrite(httpMock);
+      await flushTaskList(httpMock);
+
+      const latestActivity = store.activities()[0]!;
+      expect(latestActivity.action).toBe(ActivityAction.DELETED);
+      expect(latestActivity.taskTitle).toBe('Task To Delete');
+      expect(latestActivity.description).toContain('Deleted task "Task To Delete"');
     });
   });
 });

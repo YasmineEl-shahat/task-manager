@@ -117,12 +117,33 @@
 }
 
 .notification-btn {
+  position: relative;
   width: 40px;
   height: 40px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-danger-text, #d32f2f);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-white-solid, #ffffff);
 }
 
 .bell-icon {
