@@ -24,25 +24,45 @@ describe('SkeletonCardComponent', () => {
     TestBed.configureTestingModule({ imports: [HostDefaultComponent] });
   });
 
-  it('renders 3 skeleton cards by default', () => {
+  it('renders three kanban columns and distributes the default skeleton cards', () => {
     const f = TestBed.createComponent(HostDefaultComponent);
     f.detectChanges();
-    expect(f.debugElement.queryAll(By.css('mat-card'))).toHaveLength(3);
+    expect(f.debugElement.queryAll(By.css('.skeleton-column'))).toHaveLength(3);
+    expect(f.debugElement.queryAll(By.css('.skeleton-card'))).toHaveLength(3);
+    expect(
+      f.debugElement
+        .queryAll(By.css('.skeleton-column'))
+        .map((column) => column.queryAll(By.css('.skeleton-card')).length),
+    ).toEqual([1, 1, 1]);
   });
 
   it('marks all skeleton cards as aria-hidden', () => {
     const f = TestBed.createComponent(HostDefaultComponent);
     f.detectChanges();
-    const hidden = f.debugElement.queryAll(By.css('mat-card[aria-hidden="true"]'));
+    const hidden = f.debugElement.queryAll(By.css('.skeleton-card[aria-hidden="true"]'));
     expect(hidden).toHaveLength(3);
   });
 
-  it('each card contains skeleton line elements', () => {
+  it('matches the kanban card layout with header, body, divider, and assignee footer', () => {
     const f = TestBed.createComponent(HostDefaultComponent);
     f.detectChanges();
-    const lines = f.debugElement.queryAll(By.css('.skeleton-line'));
-    // 3 cards × 3 lines each = 9
-    expect(lines.length).toBeGreaterThanOrEqual(3);
+    const card = f.debugElement.query(By.css('.skeleton-card'));
+    expect(card.query(By.css('.card-header'))).toBeTruthy();
+    expect(card.query(By.css('.card-body'))).toBeTruthy();
+    expect(card.query(By.css('.card-divider'))).toBeTruthy();
+    expect(card.query(By.css('.card-footer .skeleton-avatar'))).toBeTruthy();
+  });
+
+  it('distributes the requested cards evenly across the kanban columns', () => {
+    const f = TestBed.createComponent(SkeletonCardComponent);
+    f.componentRef.setInput('count', 6);
+    f.detectChanges();
+
+    expect(
+      f.debugElement
+        .queryAll(By.css('.skeleton-column'))
+        .map((column) => column.queryAll(By.css('.skeleton-card')).length),
+    ).toEqual([2, 2, 2]);
   });
 
   it('defaults count signal to 3', () => {
