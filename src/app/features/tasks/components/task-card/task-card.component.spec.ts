@@ -49,14 +49,22 @@ describe('TaskCardComponent', () => {
     expect(assignee.nativeElement.textContent).toContain('Yasmine');
   });
 
-  it('emits selectTask when card is clicked', () => {
+  it('emits selectTask when the task title button is activated', () => {
     const spy = vi.fn();
     component.selectTask.subscribe(spy);
 
-    const card = fixture.debugElement.query(By.css('.task-card'));
-    card.nativeElement.click();
+    const titleButton = fixture.debugElement.query(By.css('.task-title-button'));
+    titleButton.nativeElement.click();
 
     expect(spy).toHaveBeenCalledWith('task-101');
+  });
+
+  it('uses a native title button without making the whole card a nested button', () => {
+    const card = fixture.debugElement.query(By.css('article.task-card'));
+    const titleButton = card.query(By.css('button.task-title-button'));
+
+    expect(card.nativeElement.hasAttribute('role')).toBe(false);
+    expect(titleButton.nativeElement.textContent).toContain('Implement unit tests');
   });
 
   it('emits editTask when edit button is clicked without bubbling', () => {
@@ -65,10 +73,9 @@ describe('TaskCardComponent', () => {
     component.editTask.subscribe(editSpy);
     component.selectTask.subscribe(selectSpy);
 
-    const editBtn = fixture.debugElement.query(
-      By.css('[aria-label="Edit task: Implement unit tests"]'),
-    );
-    editBtn.nativeElement.click();
+    fixture.debugElement.query(By.css('.more-menu-btn')).nativeElement.click();
+    fixture.detectChanges();
+    document.querySelector<HTMLElement>('[aria-label="Edit task: Implement unit tests"]')!.click();
 
     expect(editSpy).toHaveBeenCalledOnce();
     expect(selectSpy).not.toHaveBeenCalled();
@@ -80,10 +87,11 @@ describe('TaskCardComponent', () => {
     component.deleteTask.subscribe(deleteSpy);
     component.selectTask.subscribe(selectSpy);
 
-    const deleteBtn = fixture.debugElement.query(
-      By.css('[aria-label="Delete task: Implement unit tests"]'),
-    );
-    deleteBtn.nativeElement.click();
+    fixture.debugElement.query(By.css('.more-menu-btn')).nativeElement.click();
+    fixture.detectChanges();
+    document
+      .querySelector<HTMLElement>('[aria-label="Delete task: Implement unit tests"]')!
+      .click();
 
     expect(deleteSpy).toHaveBeenCalledWith('task-101');
     expect(selectSpy).not.toHaveBeenCalled();

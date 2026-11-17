@@ -1,13 +1,4 @@
-<div
-  class="task-card"
-  [class.overdue]="isOverdue()"
-  (click)="onCardClick()"
-  role="button"
-  [attr.aria-label]="'Task: ' + task().title"
-  tabindex="0"
-  (keydown.enter)="onCardClick()"
-  (keydown.space)="onCardClick()"
->
+<article class="task-card" [class.overdue]="isOverdue()">
   <div class="card-header">
     <div class="priority-wrapper">
       <span
@@ -24,7 +15,6 @@
       type="button"
       class="more-menu-btn"
       [matMenuTriggerFor]="taskMenu"
-      (click)="$event.stopPropagation()"
       [attr.aria-label]="'Task options for ' + task().title"
     >
       <mat-icon class="more-icon">more_vert</mat-icon>
@@ -32,7 +22,11 @@
   </div>
 
   <div class="card-body">
-    <h3 class="task-title">{{ task().title }}</h3>
+    <h3 class="task-heading">
+      <button type="button" class="task-title-button" (click)="onCardClick()">
+        <span class="task-title">{{ task().title }}</span>
+      </button>
+    </h3>
 
     @if (task().description) {
       <p class="task-description">{{ task().description }}</p>
@@ -65,20 +59,6 @@
     </div>
   </div>
 
-  <!-- Screen reader / test-friendly action triggers -->
-  <div class="sr-only">
-    <button type="button" (click)="onEdit($event)" [attr.aria-label]="'Edit task: ' + task().title">
-      Edit
-    </button>
-    <button
-      type="button"
-      (click)="onDelete($event)"
-      [attr.aria-label]="'Delete task: ' + task().title"
-    >
-      Delete
-    </button>
-  </div>
-
   <mat-menu #taskMenu="matMenu" xPosition="before">
     <button mat-menu-item (click)="onEdit($event)" [attr.aria-label]="'Edit task: ' + task().title">
       <mat-icon>edit</mat-icon>
@@ -92,5 +72,27 @@
       <mat-icon color="warn">delete</mat-icon>
       <span>Delete</span>
     </button>
+    @for (option of statusOptions; track option.value) {
+      <button
+        mat-menu-item
+        [disabled]="task().status === option.value"
+        (click)="onStatusChange(option.value)"
+      >
+        <mat-icon>arrow_forward</mat-icon>
+        <span>Move to {{ option.label }}</span>
+      </button>
+    }
+    <button mat-menu-item [disabled]="position() === 0" (click)="reorder.emit('up')">
+      <mat-icon>arrow_upward</mat-icon>
+      <span>Move earlier</span>
+    </button>
+    <button
+      mat-menu-item
+      [disabled]="position() === taskCount() - 1"
+      (click)="reorder.emit('down')"
+    >
+      <mat-icon>arrow_downward</mat-icon>
+      <span>Move later</span>
+    </button>
   </mat-menu>
-</div>
+</article>

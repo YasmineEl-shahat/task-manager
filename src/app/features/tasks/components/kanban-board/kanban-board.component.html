@@ -7,6 +7,7 @@
     @for (column of visibleColumns(); track column.id) {
       <app-kanban-column
         [title]="column.title"
+        [status]="column.status"
         [tasks]="column.tasks"
         [emptyMessage]="column.emptyMessage"
         [emptyIcon]="column.emptyIcon"
@@ -14,6 +15,8 @@
         (editTask)="editTask.emit($event)"
         (deleteTask)="deleteTask.emit($event)"
         (taskDrop)="onTaskDrop(column.status, $event)"
+        (statusChange)="onTaskStatusChange($event)"
+        (reorderTask)="onTaskReorder(column.status, $event)"
       />
     }
   </section>

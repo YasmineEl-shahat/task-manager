@@ -141,6 +141,31 @@ describe('KanbanBoardComponent', () => {
     });
   });
 
+  it('supports keyboard reordering and status changes through task actions', () => {
+    const secondTodoTask = { ...mockTasks[0]!, id: 't-4', title: 'Task 4' };
+    fixture.componentRef.setInput('tasks', [mockTasks[0]!, secondTodoTask, ...mockTasks.slice(1)]);
+    fixture.detectChanges();
+
+    const dropSpy = vi.fn();
+    component.taskDrop.subscribe(dropSpy);
+
+    component.onTaskReorder(TaskStatus.TODO, { taskId: 't-1', direction: 'down' });
+    expect(dropSpy).toHaveBeenLastCalledWith({
+      taskId: 't-1',
+      status: TaskStatus.TODO,
+      statusChanged: false,
+      orderedTaskIds: ['t-4', 't-1'],
+    });
+
+    component.onTaskStatusChange({ taskId: 't-1', status: TaskStatus.DONE });
+    expect(dropSpy).toHaveBeenLastCalledWith({
+      taskId: 't-1',
+      status: TaskStatus.DONE,
+      statusChanged: true,
+      orderedTaskIds: ['t-4', 't-1'],
+    });
+  });
+
   it('emits selectTask, editTask, and deleteTask events from task cards', () => {
     const selectSpy = vi.fn();
     const editSpy = vi.fn();

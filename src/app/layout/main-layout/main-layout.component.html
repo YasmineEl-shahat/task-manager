@@ -1,4 +1,5 @@
 <div class="layout-container">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <app-topbar
     (searchChange)="onGlobalSearch($event)"
     (notificationClick)="store.toggleActivityPanel()"
@@ -8,7 +9,7 @@
   <div class="layout-body">
     <app-sidebar class="layout-sidebar" (createNewTask)="openCreateTaskModal()" />
 
-    <main class="layout-content">
+    <main id="main-content" class="layout-content" tabindex="-1">
       <router-outlet />
     </main>
   </div>
@@ -20,7 +21,15 @@
       (click)="store.closeActivityPanel()"
       role="presentation"
     ></div>
-    <aside class="activity-drawer" role="complementary" aria-label="Recent Activity Feed">
+    <aside
+      class="activity-drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="activity-feed-title"
+      cdkTrapFocus
+      cdkTrapFocusAutoCapture
+      (keydown.escape)="store.closeActivityPanel()"
+    >
       <app-activity-feed
         [showClose]="true"
         (closeFeed)="store.closeActivityPanel()"

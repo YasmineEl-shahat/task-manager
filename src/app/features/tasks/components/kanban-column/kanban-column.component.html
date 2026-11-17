@@ -10,7 +10,7 @@
     [cdkDropListData]="tasks()"
     (cdkDropListDropped)="onDrop($event)"
   >
-    @for (task of tasks(); track task.id) {
+    @for (task of tasks(); track task.id; let index = $index) {
       <div class="task-drag-item" cdkDrag [cdkDragData]="task">
         <button
           type="button"
@@ -23,9 +23,13 @@
         </button>
         <app-task-card
           [task]="task"
+          [position]="index"
+          [taskCount]="count()"
           (selectTask)="selectTask.emit($event)"
           (editTask)="editTask.emit($event)"
           (deleteTask)="deleteTask.emit($event)"
+          (statusChange)="statusChange.emit({ taskId: task.id, status: $event })"
+          (reorder)="moveTask(task.id, $event)"
         />
       </div>
     } @empty {

@@ -45,7 +45,8 @@ A high-performance, enterprise-grade Task Management application engineered with
 
 ### Key Capabilities
 
-- **Interactive Kanban Board**: Categorized columns (`TO DO`, `IN PROGRESS`, `DONE`) with column count badges, status tab switching, empty states, and drag-and-drop task reordering and status changes.
+- **Interactive Kanban Board**: Categorized columns (`TO DO`, `IN PROGRESS`, `DONE`) with column count badges, status filters, empty states, drag-and-drop, and keyboard-accessible task status and ordering actions.
+- **Accessibility**: Skip navigation link, semantic task actions, focus-managed activity dialog, reduced-motion support, and keyboard alternatives for Kanban drag-and-drop.
 - **Dynamic Task CRUD Operations**: Dialog-based task creation and editing with full form validation, priority assignment, and assignee selection.
 - **Real-Time KPI Dashboard**: Live computation of total tasks, completion rates, in-progress workloads, and overdue items with visual indicators.
 - **Interactive Analytics**: Pure SVG data visualizations including a status distribution donut chart, priority breakdown, and summary metric cards without heavy charting dependencies.

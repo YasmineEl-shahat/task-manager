@@ -125,6 +125,31 @@ export class KanbanBoardComponent {
     });
   }
 
+  onTaskStatusChange(change: { taskId: string; status: TaskStatus }): void {
+    this.taskDrop.emit({
+      ...change,
+      statusChanged: true,
+      orderedTaskIds: this.orderedTaskIds(),
+    });
+  }
+
+  onTaskReorder(status: TaskStatus, change: { taskId: string; direction: 'up' | 'down' }): void {
+    const tasks = this.sortTasks(this.tasks().filter((task) => task.status === status));
+    const currentIndex = tasks.findIndex((task) => task.id === change.taskId);
+    const nextIndex = currentIndex + (change.direction === 'up' ? -1 : 1);
+    if (currentIndex < 0 || nextIndex < 0 || nextIndex >= tasks.length) return;
+
+    moveItemInArray(tasks, currentIndex, nextIndex);
+    const orderedTaskIds = tasks.map((task) => task.id);
+    this.orderedTaskIds.set(orderedTaskIds);
+    this.taskDrop.emit({
+      taskId: change.taskId,
+      status,
+      statusChanged: false,
+      orderedTaskIds,
+    });
+  }
+
   private sortTasks(tasks: readonly Task[]): Task[] {
     const order = new Map(this.orderedTaskIds().map((id, index) => [id, index]));
     return [...tasks].sort(

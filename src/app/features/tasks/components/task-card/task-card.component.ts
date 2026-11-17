@@ -21,10 +21,20 @@ import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
 })
 export class TaskCardComponent {
   readonly task = input.required<Task>();
+  readonly position = input(0);
+  readonly taskCount = input(1);
 
   readonly selectTask = output<string>();
   readonly editTask = output<Task>();
   readonly deleteTask = output<string>();
+  readonly statusChange = output<TaskStatus>();
+  readonly reorder = output<'up' | 'down'>();
+
+  protected readonly statusOptions = [
+    { value: TaskStatus.TODO, label: 'To Do' },
+    { value: TaskStatus.IN_PROGRESS, label: 'In Progress' },
+    { value: TaskStatus.DONE, label: 'Done' },
+  ];
 
   protected readonly isOverdue = computed(() => {
     const t = this.task();
@@ -137,5 +147,9 @@ export class TaskCardComponent {
   protected onDelete(event: MouseEvent): void {
     event.stopPropagation();
     this.deleteTask.emit(this.task().id);
+  }
+
+  protected onStatusChange(status: TaskStatus): void {
+    this.statusChange.emit(status);
   }
 }

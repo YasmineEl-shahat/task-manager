@@ -23,7 +23,7 @@
       "id": "task-002",
       "title": "Update documentation",
       "description": "Review and update API documentation for v2.0 release",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "medium",
       "dueDate": "2026-11-21",
       "assignee": {
@@ -42,7 +42,7 @@
       "id": "task-003",
       "title": "Organize team meeting",
       "description": "Schedule and prepare agenda for quarterly planning session",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "low",
       "dueDate": "2026-11-23",
       "assignee": {
@@ -423,6 +423,24 @@
       "performedBy": "John Doe",
       "description": "Changed status to In Progress for \"Design new homepage layout\"",
       "createdAt": "2026-11-17T06:48:40.468Z"
+    },
+    {
+      "id": "act-1794930953313-osoac",
+      "taskId": "task-002",
+      "taskTitle": "Update documentation",
+      "action": "status_changed",
+      "performedBy": "Sarah Smith",
+      "description": "Changed status to In Progress for \"Update documentation\"",
+      "createdAt": "2026-11-17T15:55:53.313Z"
+    },
+    {
+      "id": "act-1794930958407-gvz6b",
+      "taskId": "task-003",
+      "taskTitle": "Organize team meeting",
+      "action": "status_changed",
+      "performedBy": "Mike Johnson",
+      "description": "Changed status to In Progress for \"Organize team meeting\"",
+      "createdAt": "2026-11-17T15:55:58.407Z"
     }
   ]
 }

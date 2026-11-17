@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
 
+import { TaskStatus } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
 import { TaskCardComponent } from '../task-card/task-card.component';
 
@@ -20,6 +21,7 @@ import { TaskCardComponent } from '../task-card/task-card.component';
 })
 export class KanbanColumnComponent {
   readonly title = input.required<string>();
+  readonly status = input.required<TaskStatus>();
   readonly tasks = input<Task[]>([]);
   readonly emptyMessage = input<string>('No tasks');
   readonly emptyIcon = input<string>('inbox');
@@ -28,8 +30,15 @@ export class KanbanColumnComponent {
   readonly editTask = output<Task>();
   readonly deleteTask = output<string>();
   readonly taskDrop = output<CdkDragDrop<Task[]>>();
+  readonly statusChange = output<{ taskId: string; status: TaskStatus }>();
+  readonly reorderTask = output<{ taskId: string; direction: 'up' | 'down' }>();
 
   readonly count = computed(() => this.tasks().length);
+
+  moveTask(taskId: string, direction: 'up' | 'down'): void {
+    if (!this.tasks().some((task) => task.id === taskId)) return;
+    this.reorderTask.emit({ taskId, direction });
+  }
 
   onDrop(event: CdkDragDrop<Task[]>): void {
     this.taskDrop.emit(event);

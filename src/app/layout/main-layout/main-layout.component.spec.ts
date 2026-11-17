@@ -67,6 +67,9 @@ describe('MainLayoutComponent', () => {
 
     const drawer = fixture.debugElement.query(By.css('.activity-drawer'));
     expect(drawer).toBeTruthy();
+    expect(drawer.nativeElement.getAttribute('role')).toBe('dialog');
+    expect(drawer.nativeElement.getAttribute('aria-modal')).toBe('true');
+    expect(drawer.nativeElement.getAttribute('aria-labelledby')).toBe('activity-feed-title');
   });
 
   it('closes activity panel when backdrop is clicked', () => {

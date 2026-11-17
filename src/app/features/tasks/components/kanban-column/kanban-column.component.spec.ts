@@ -45,6 +45,7 @@ describe('KanbanColumnComponent', () => {
     fixture = TestBed.createComponent(KanbanColumnComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('title', 'TO DO');
+    fixture.componentRef.setInput('status', TaskStatus.TODO);
     fixture.componentRef.setInput('tasks', mockTasks);
     fixture.detectChanges();
   });
@@ -89,5 +90,19 @@ describe('KanbanColumnComponent', () => {
     expect(selectSpy).toHaveBeenCalledWith('t-col-1');
     expect(editSpy).toHaveBeenCalledWith(mockTasks[0]!);
     expect(deleteSpy).toHaveBeenCalledWith('t-col-1');
+  });
+
+  it('forwards keyboard status and reorder actions from task cards', () => {
+    const statusSpy = vi.fn();
+    const reorderSpy = vi.fn();
+    component.statusChange.subscribe(statusSpy);
+    component.reorderTask.subscribe(reorderSpy);
+
+    const card = fixture.debugElement.query(By.css('app-task-card')).componentInstance;
+    card.statusChange.emit(TaskStatus.DONE);
+    card.reorder.emit('down');
+
+    expect(statusSpy).toHaveBeenCalledWith({ taskId: 't-col-1', status: TaskStatus.DONE });
+    expect(reorderSpy).toHaveBeenCalledWith({ taskId: 't-col-1', direction: 'down' });
   });
 });

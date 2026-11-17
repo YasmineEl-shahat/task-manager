@@ -1,4 +1,5 @@
 <div class="dashboard-page">
+  <h1 class="visually-hidden">Task dashboard</h1>
   <!-- ── 1. Statistics Cards Grid ─────────────────────────────────────────── -->
   <section class="stats-grid" aria-label="Task Statistics">
     @for (card of statCards(); track card.title) {
@@ -28,15 +29,14 @@
 
   <!-- ── 3. Filter Bar & Actions ─────────────────────────────────────────── -->
   <section class="action-bar" aria-label="Filters and Actions">
-    <div class="status-tabs" role="tablist">
+    <div class="status-tabs" role="group" aria-label="Filter tasks by status">
       @for (tab of statusTabs; track tab.id) {
         <button
           type="button"
           class="tab-btn"
           [class.active]="selectedTab() === tab.id"
           (click)="onTabSelect(tab.id)"
-          role="tab"
-          [attr.aria-selected]="selectedTab() === tab.id"
+          [attr.aria-pressed]="selectedTab() === tab.id"
         >
           {{ tab.label }}
         </button>
