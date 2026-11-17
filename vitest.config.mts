@@ -24,48 +24,39 @@ function angularJitResourcePlugin() {
       let transformed = code;
 
       // Inline templateUrl
-      transformed = transformed.replace(
-        /templateUrl:\s*['"]([^'"]+)['"]/g,
-        (_, relPath) => {
-          const filePath = resolve(dir, relPath);
-          if (existsSync(filePath)) {
-            const content = readFileSync(filePath, 'utf8');
-            return `template: ${JSON.stringify(content)}`;
-          }
-          return _;
-        },
-      );
+      transformed = transformed.replace(/templateUrl:\s*['"]([^'"]+)['"]/g, (_, relPath) => {
+        const filePath = resolve(dir, relPath);
+        if (existsSync(filePath)) {
+          const content = readFileSync(filePath, 'utf8');
+          return `template: ${JSON.stringify(content)}`;
+        }
+        return _;
+      });
 
       // Inline styleUrl
-      transformed = transformed.replace(
-        /styleUrl:\s*['"]([^'"]+)['"]/g,
-        (_, relPath) => {
-          const filePath = resolve(dir, relPath);
-          if (existsSync(filePath)) {
-            const content = readFileSync(filePath, 'utf8');
-            return `styles: [${JSON.stringify(content)}]`;
-          }
-          return _;
-        },
-      );
+      transformed = transformed.replace(/styleUrl:\s*['"]([^'"]+)['"]/g, (_, relPath) => {
+        const filePath = resolve(dir, relPath);
+        if (existsSync(filePath)) {
+          const content = readFileSync(filePath, 'utf8');
+          return `styles: [${JSON.stringify(content)}]`;
+        }
+        return _;
+      });
 
       // Inline styleUrls
-      transformed = transformed.replace(
-        /styleUrls:\s*\[([^\]]+)\]/g,
-        (fullMatch, pathsList) => {
-          const urls = pathsList
-            .split(',')
-            .map((p: string) => p.trim().replace(/^['"]|['"]$/g, ''))
-            .filter(Boolean);
+      transformed = transformed.replace(/styleUrls:\s*\[([^\]]+)\]/g, (fullMatch, pathsList) => {
+        const urls = pathsList
+          .split(',')
+          .map((p: string) => p.trim().replace(/^['"]|['"]$/g, ''))
+          .filter(Boolean);
 
-          const styles = urls.map((u: string) => {
-            const filePath = resolve(dir, u);
-            return existsSync(filePath) ? readFileSync(filePath, 'utf8') : '';
-          });
+        const styles = urls.map((u: string) => {
+          const filePath = resolve(dir, u);
+          return existsSync(filePath) ? readFileSync(filePath, 'utf8') : '';
+        });
 
-          return `styles: ${JSON.stringify(styles)}`;
-        },
-      );
+        return `styles: ${JSON.stringify(styles)}`;
+      });
 
       // Auto-register propMetadata for signal inputs and outputs in JIT mode
       const classMatches = [...transformed.matchAll(/export\s+class\s+(\w+)/g)];
@@ -74,8 +65,14 @@ function angularJitResourcePlugin() {
         if (!className) continue;
 
         // Find input() and output() properties
-        const inputMatches = [...transformed.matchAll(/(?:readonly\s+)?(\w+)\s*=\s*input(?:\.required)?\s*<[^>]*>?\s*\(/g)];
-        const outputMatches = [...transformed.matchAll(/(?:readonly\s+)?(\w+)\s*=\s*output\s*<[^>]*>?\s*\(/g)];
+        const inputMatches = [
+          ...transformed.matchAll(
+            /(?:readonly\s+)?(\w+)\s*=\s*input(?:\.required)?\s*<[^>]*>?\s*\(/g,
+          ),
+        ];
+        const outputMatches = [
+          ...transformed.matchAll(/(?:readonly\s+)?(\w+)\s*=\s*output\s*<[^>]*>?\s*\(/g),
+        ];
 
         if (inputMatches.length > 0 || outputMatches.length > 0) {
           const propEntries: string[] = [];

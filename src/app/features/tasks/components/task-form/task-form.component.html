@@ -59,12 +59,7 @@
       <!-- Due Date -->
       <mat-form-field appearance="outline" class="form-field half-width">
         <mat-label>Due Date</mat-label>
-        <input
-          matInput
-          type="date"
-          formControlName="dueDate"
-          data-testid="task-duedate-input"
-        />
+        <input matInput type="date" formControlName="dueDate" data-testid="task-duedate-input" />
         @if (form.controls.dueDate.hasError('required') && form.controls.dueDate.touched) {
           <mat-error>Due date is required</mat-error>
         }
@@ -75,9 +70,7 @@
         <mat-label>Assignee</mat-label>
         <mat-select formControlName="assigneeId" data-testid="task-assignee-select">
           @for (user of assignees; track user.id) {
-            <mat-option [value]="user.id">
-              {{ user.name }} ({{ user.avatar }})
-            </mat-option>
+            <mat-option [value]="user.id"> {{ user.name }} ({{ user.avatar }}) </mat-option>
           }
         </mat-select>
         @if (form.controls.assigneeId.hasError('required') && form.controls.assigneeId.touched) {
@@ -99,9 +92,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="dialog-actions">
-    <button mat-button type="button" (click)="onCancel()" data-testid="cancel-btn">
-      Cancel
-    </button>
+    <button mat-button type="button" (click)="onCancel()" data-testid="cancel-btn">Cancel</button>
     <button
       mat-flat-button
       color="primary"

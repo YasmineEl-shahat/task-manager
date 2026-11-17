@@ -22,10 +22,32 @@ const makeTask = (overrides: Partial<Task> = {}): Task => ({
 });
 
 const SAMPLE_TASKS: Task[] = [
-  makeTask({ id: '1', status: TaskStatus.TODO, priority: TaskPriority.HIGH, assignee: { id: 'u1', name: 'Alice', avatar: '', email: 'a@a.com' } }),
-  makeTask({ id: '2', status: TaskStatus.IN_PROGRESS, priority: TaskPriority.MEDIUM, assignee: { id: 'u2', name: 'Bob', avatar: '', email: 'b@b.com' } }),
-  makeTask({ id: '3', status: TaskStatus.DONE, priority: TaskPriority.LOW, assignee: { id: 'u1', name: 'Alice', avatar: '', email: 'a@a.com' }, completedAt: new Date().toISOString() }),
-  makeTask({ id: '4', status: TaskStatus.DONE, priority: TaskPriority.HIGH, assignee: { id: 'u3', name: 'Charlie', avatar: '', email: 'c@c.com' }, completedAt: new Date().toISOString() }),
+  makeTask({
+    id: '1',
+    status: TaskStatus.TODO,
+    priority: TaskPriority.HIGH,
+    assignee: { id: 'u1', name: 'Alice', avatar: '', email: 'a@a.com' },
+  }),
+  makeTask({
+    id: '2',
+    status: TaskStatus.IN_PROGRESS,
+    priority: TaskPriority.MEDIUM,
+    assignee: { id: 'u2', name: 'Bob', avatar: '', email: 'b@b.com' },
+  }),
+  makeTask({
+    id: '3',
+    status: TaskStatus.DONE,
+    priority: TaskPriority.LOW,
+    assignee: { id: 'u1', name: 'Alice', avatar: '', email: 'a@a.com' },
+    completedAt: new Date().toISOString(),
+  }),
+  makeTask({
+    id: '4',
+    status: TaskStatus.DONE,
+    priority: TaskPriority.HIGH,
+    assignee: { id: 'u3', name: 'Charlie', avatar: '', email: 'c@c.com' },
+    completedAt: new Date().toISOString(),
+  }),
 ];
 
 describe('AnalyticsPageComponent', () => {

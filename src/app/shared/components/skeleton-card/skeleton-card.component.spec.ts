@@ -12,8 +12,8 @@ import { SkeletonCardComponent } from './skeleton-card.component';
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Component({
-  selector: 'host-default',
-  changeDetection: ChangeDetectionStrategy.Default,
+  selector: 'app-host-default',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SkeletonCardComponent],
   template: `<app-skeleton-card />`,
 })

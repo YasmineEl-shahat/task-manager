@@ -64,8 +64,8 @@ describe('KanbanBoardComponent', () => {
     const columns = fixture.debugElement.queryAll(By.css('.kanban-column'));
     expect(columns.length).toBe(3);
 
-    const badges = columns.map(
-      (c) => c.query(By.css('.column-badge')).nativeElement.textContent.trim(),
+    const badges = columns.map((c) =>
+      c.query(By.css('.column-badge')).nativeElement.textContent.trim(),
     );
     expect(badges).toEqual(['1', '1', '1']);
   });
@@ -85,7 +85,9 @@ describe('KanbanBoardComponent', () => {
 
     const columns = fixture.debugElement.queryAll(By.css('.kanban-column'));
     expect(columns.length).toBe(1);
-    expect(columns[0]!.query(By.css('.column-title')).nativeElement.textContent).toContain('IN PROGRESS');
+    expect(columns[0]!.query(By.css('.column-title')).nativeElement.textContent).toContain(
+      'IN PROGRESS',
+    );
   });
 
   it('renders done column only when tab is done', () => {

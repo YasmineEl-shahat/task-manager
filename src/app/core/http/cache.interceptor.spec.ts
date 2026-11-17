@@ -1,20 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  HttpClient,
-  HttpContext,
-  provideHttpClient,
-  withInterceptors,
-} from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { HttpClient, HttpContext, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import {
-  BYPASS_CACHE,
-  cacheInterceptor,
-} from './cache.interceptor';
+import { BYPASS_CACHE, cacheInterceptor } from './cache.interceptor';
 import { HttpCacheService } from './cache.service';
 
 describe('cacheInterceptor', () => {

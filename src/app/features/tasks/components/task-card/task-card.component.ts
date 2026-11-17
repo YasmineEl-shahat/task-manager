@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,13 +15,7 @@ import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
 @Component({
   selector: 'app-task-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-  ],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, MatMenuModule, MatTooltipModule],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.scss',
 })
@@ -151,6 +139,3 @@ export class TaskCardComponent {
     this.deleteTask.emit(this.task().id);
   }
 }
-
-
-

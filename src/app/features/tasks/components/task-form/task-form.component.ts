@@ -1,20 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
-import {
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -72,9 +59,7 @@ export class TaskFormComponent {
   readonly isSubmitting = signal(false);
 
   // Default due date to tomorrow formatted as YYYY-MM-DD
-  private readonly defaultDueDate = new Date(Date.now() + 86400000)
-    .toISOString()
-    .split('T')[0];
+  private readonly defaultDueDate = new Date(Date.now() + 86400000).toISOString().split('T')[0];
 
   readonly form = this.fb.group({
     title: [
@@ -83,20 +68,12 @@ export class TaskFormComponent {
     ],
     description: [this.data.task?.description ?? '', [Validators.maxLength(500)]],
     status: [this.data.task?.status ?? TaskStatus.TODO, [Validators.required]],
-    priority: [
-      this.data.task?.priority ?? TaskPriority.MEDIUM,
-      [Validators.required],
-    ],
+    priority: [this.data.task?.priority ?? TaskPriority.MEDIUM, [Validators.required]],
     dueDate: [
-      this.data.task?.dueDate
-        ? this.data.task.dueDate.split('T')[0]
-        : this.defaultDueDate,
+      this.data.task?.dueDate ? this.data.task.dueDate.split('T')[0] : this.defaultDueDate,
       [Validators.required],
     ],
-    assigneeId: [
-      this.data.task?.assignee?.id ?? DEFAULT_ASSIGNEE.id,
-      [Validators.required],
-    ],
+    assigneeId: [this.data.task?.assignee?.id ?? DEFAULT_ASSIGNEE.id, [Validators.required]],
     tags: [this.data.task?.tags?.join(', ') ?? ''],
   });
 
@@ -109,8 +86,7 @@ export class TaskFormComponent {
     this.isSubmitting.set(true);
 
     const val = this.form.getRawValue();
-    const assignee =
-      this.assignees.find((a) => a.id === val.assigneeId) ?? DEFAULT_ASSIGNEE;
+    const assignee = this.assignees.find((a) => a.id === val.assigneeId) ?? DEFAULT_ASSIGNEE;
 
     const tags = val.tags
       .split(',')

@@ -1,24 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import {
-  INITIAL_TASK_FILTERS,
-  TaskFilters,
-} from '@tasks/models/task-filter.model';
-import {
-  TaskFilterPriority,
-  TaskFilterStatus,
-} from '@tasks/models/task.enums';
+import { INITIAL_TASK_FILTERS, TaskFilters } from '@tasks/models/task-filter.model';
+import { TaskFilterPriority, TaskFilterStatus } from '@tasks/models/task.enums';
 
 /**
  * Presentational (dumb) component for filtering and searching tasks.
@@ -27,13 +15,7 @@ import {
 @Component({
   selector: 'app-task-filter',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatIconModule,
-  ],
+  imports: [MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule],
   templateUrl: './task-filter.component.html',
   styleUrl: './task-filter.component.scss',
 })

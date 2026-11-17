@@ -17,7 +17,5 @@ export class SkeletonCardComponent {
   readonly count = input<number>(3);
 
   /** Range array used by `@for` to render N skeleton cards. */
-  protected readonly items = computed(() =>
-    Array.from({ length: this.count() }, (_, i) => i),
-  );
+  protected readonly items = computed(() => Array.from({ length: this.count() }, (_, i) => i));
 }

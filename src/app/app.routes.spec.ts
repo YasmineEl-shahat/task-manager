@@ -27,39 +27,23 @@ describe('App Routes and Lazy Navigation', () => {
     location = TestBed.inject(Location);
   });
 
-  it(
-    'redirects empty path "" to "/dashboard"',
-    async () => {
-      await router.navigateByUrl('');
-      expect(location.path()).toBe('/dashboard');
-    },
-    30000,
-  );
+  it('redirects empty path "" to "/dashboard"', async () => {
+    await router.navigateByUrl('');
+    expect(location.path()).toBe('/dashboard');
+  }, 30000);
 
-  it(
-    'navigates to "/dashboard" lazy route successfully',
-    async () => {
-      await router.navigateByUrl('/dashboard');
-      expect(location.path()).toBe('/dashboard');
-    },
-    30000,
-  );
+  it('navigates to "/dashboard" lazy route successfully', async () => {
+    await router.navigateByUrl('/dashboard');
+    expect(location.path()).toBe('/dashboard');
+  }, 30000);
 
-  it(
-    'navigates to "/tasks" lazy route successfully',
-    async () => {
-      await router.navigateByUrl('/tasks');
-      expect(location.path()).toBe('/tasks');
-    },
-    30000,
-  );
+  it('navigates to "/tasks" lazy route successfully', async () => {
+    await router.navigateByUrl('/tasks');
+    expect(location.path()).toBe('/tasks');
+  }, 30000);
 
-  it(
-    'redirects unknown wildcards "**" to "/dashboard"',
-    async () => {
-      await router.navigateByUrl('/some/non-existent/route');
-      expect(location.path()).toBe('/dashboard');
-    },
-    30000,
-  );
+  it('redirects unknown wildcards "**" to "/dashboard"', async () => {
+    await router.navigateByUrl('/some/non-existent/route');
+    expect(location.path()).toBe('/dashboard');
+  }, 30000);
 });

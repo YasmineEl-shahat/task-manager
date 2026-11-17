@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { Task } from '@tasks/models/task.model';
 import { TaskStatus } from '@tasks/models/task.enums';
@@ -43,17 +37,13 @@ export class KanbanBoardComponent {
   readonly editTask = output<Task>();
   readonly deleteTask = output<string>();
 
-  readonly todoTasks = computed(() =>
-    this.tasks().filter((t) => t.status === TaskStatus.TODO),
-  );
+  readonly todoTasks = computed(() => this.tasks().filter((t) => t.status === TaskStatus.TODO));
 
   readonly inProgressTasks = computed(() =>
     this.tasks().filter((t) => t.status === TaskStatus.IN_PROGRESS),
   );
 
-  readonly doneTasks = computed(() =>
-    this.tasks().filter((t) => t.status === TaskStatus.DONE),
-  );
+  readonly doneTasks = computed(() => this.tasks().filter((t) => t.status === TaskStatus.DONE));
 
   readonly columns = computed<readonly KanbanColumnConfig[]>(() => [
     {

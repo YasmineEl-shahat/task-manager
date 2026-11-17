@@ -9,49 +9,49 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import(
-        '@features/dashboard/pages/dashboard-page/dashboard-page.component'
-      ).then((m) => m.DashboardPageComponent),
+      import('@features/dashboard/pages/dashboard-page/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent,
+      ),
     title: 'Dashboard | Task Manager',
   },
   {
     path: 'tasks',
     loadComponent: () =>
-      import(
-        '@features/dashboard/pages/dashboard-page/dashboard-page.component'
-      ).then((m) => m.DashboardPageComponent),
+      import('@features/dashboard/pages/dashboard-page/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent,
+      ),
     title: 'Tasks | Task Manager',
   },
   {
     path: 'calendar',
     loadComponent: () =>
-      import(
-        '@features/dashboard/pages/dashboard-page/dashboard-page.component'
-      ).then((m) => m.DashboardPageComponent),
+      import('@features/dashboard/pages/dashboard-page/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent,
+      ),
     title: 'Calendar | Task Manager',
   },
   {
     path: 'analytics',
     loadComponent: () =>
-      import(
-        '@features/analytics/pages/analytics-page/analytics-page.component'
-      ).then((m) => m.AnalyticsPageComponent),
+      import('@features/analytics/pages/analytics-page/analytics-page.component').then(
+        (m) => m.AnalyticsPageComponent,
+      ),
     title: 'Analytics | Task Manager',
   },
   {
     path: 'team',
     loadComponent: () =>
-      import(
-        '@features/dashboard/pages/dashboard-page/dashboard-page.component'
-      ).then((m) => m.DashboardPageComponent),
+      import('@features/dashboard/pages/dashboard-page/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent,
+      ),
     title: 'Team | Task Manager',
   },
   {
     path: 'settings',
     loadComponent: () =>
-      import(
-        '@features/dashboard/pages/dashboard-page/dashboard-page.component'
-      ).then((m) => m.DashboardPageComponent),
+      import('@features/dashboard/pages/dashboard-page/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent,
+      ),
     title: 'Settings | Task Manager',
   },
   {

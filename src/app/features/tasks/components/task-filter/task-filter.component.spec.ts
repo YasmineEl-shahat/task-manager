@@ -3,13 +3,8 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { By } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
-import {
-  INITIAL_TASK_FILTERS,
-} from '@tasks/models/task-filter.model';
-import {
-  TaskFilterPriority,
-  TaskFilterStatus,
-} from '@tasks/models/task.enums';
+import { INITIAL_TASK_FILTERS } from '@tasks/models/task-filter.model';
+import { TaskFilterPriority, TaskFilterStatus } from '@tasks/models/task.enums';
 import { TaskFilterComponent } from './task-filter.component';
 
 describe('TaskFilterComponent', () => {
@@ -53,9 +48,7 @@ describe('TaskFilterComponent', () => {
     });
     fixture.detectChanges();
 
-    const clearBtn = fixture.debugElement.query(
-      By.css('[aria-label="Clear search"]'),
-    );
+    const clearBtn = fixture.debugElement.query(By.css('[aria-label="Clear search"]'));
     expect(clearBtn).toBeTruthy();
 
     clearBtn.nativeElement.click();
@@ -83,9 +76,7 @@ describe('TaskFilterComponent', () => {
     component.resetFilters.subscribe(resetSpy);
 
     // Initial state: no reset button
-    expect(
-      fixture.debugElement.query(By.css('[aria-label="Reset all filters"]')),
-    ).toBeNull();
+    expect(fixture.debugElement.query(By.css('[aria-label="Reset all filters"]'))).toBeNull();
 
     // Active filter state: reset button appears
     fixture.componentRef.setInput('filters', {
@@ -94,9 +85,7 @@ describe('TaskFilterComponent', () => {
     });
     fixture.detectChanges();
 
-    const resetBtn = fixture.debugElement.query(
-      By.css('[aria-label="Reset all filters"]'),
-    );
+    const resetBtn = fixture.debugElement.query(By.css('[aria-label="Reset all filters"]'));
     expect(resetBtn).toBeTruthy();
 
     resetBtn.nativeElement.click();

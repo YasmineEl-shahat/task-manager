@@ -1,12 +1,10 @@
 <div class="analytics-page">
-
   @if (allTasks().length === 0) {
     <div class="empty-state">
       <mat-icon class="empty-icon">bar_chart</mat-icon>
       <p>No task data to display yet.</p>
     </div>
   } @else {
-
     <!-- Summary Cards -->
     <section class="summary-cards">
       @for (card of summaryCards(); track card.label) {
@@ -24,18 +22,19 @@
 
     <!-- Donut Charts Row -->
     <section class="charts-row">
-
       <!-- Status Distribution -->
       <div class="chart-card">
         <h3 class="chart-title">Status Distribution</h3>
         <div class="donut-wrapper">
           <svg viewBox="0 0 120 120" width="160" height="160">
             <!-- Background track -->
-            <circle cx="60" cy="60" r="54" fill="none" stroke="#f5f5f5" stroke-width="12"/>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#f5f5f5" stroke-width="12" />
             <!-- Segments -->
             @for (seg of statusSegments(); track seg.label) {
               <circle
-                cx="60" cy="60" r="54"
+                cx="60"
+                cy="60"
+                r="54"
                 fill="none"
                 stroke-width="12"
                 [attr.stroke]="seg.color"
@@ -62,10 +61,12 @@
         <h3 class="chart-title">Priority Distribution</h3>
         <div class="donut-wrapper">
           <svg viewBox="0 0 120 120" width="160" height="160">
-            <circle cx="60" cy="60" r="54" fill="none" stroke="#f5f5f5" stroke-width="12"/>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#f5f5f5" stroke-width="12" />
             @for (seg of prioritySegments(); track seg.label) {
               <circle
-                cx="60" cy="60" r="54"
+                cx="60"
+                cy="60"
+                r="54"
                 fill="none"
                 stroke-width="12"
                 [attr.stroke]="seg.color"
@@ -86,7 +87,6 @@
           }
         </div>
       </div>
-
     </section>
 
     <!-- Tasks by Assignee (Horizontal bars) -->
@@ -96,7 +96,11 @@
         <div class="assignee-bar-row">
           <span class="bar-label">{{ entry.label }}</span>
           <div class="bar-track">
-            <div class="bar-fill" [style.width.%]="entry.percentage * 100" [style.background]="entry.color"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="entry.percentage * 100"
+              [style.background]="entry.color"
+            ></div>
           </div>
           <span class="bar-value">{{ entry.value }}</span>
         </div>
@@ -119,6 +123,5 @@
         }
       </div>
     </div>
-
   }
 </div>

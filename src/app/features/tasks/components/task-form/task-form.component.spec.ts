@@ -6,11 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TaskPriority, TaskStatus } from '@tasks/models/task.enums';
 import { Task } from '@tasks/models/task.model';
 import { TaskStore } from '@tasks/store/task.store';
-import {
-  AVAILABLE_ASSIGNEES,
-  TaskFormComponent,
-  TaskFormData,
-} from './task-form.component';
+import { AVAILABLE_ASSIGNEES, TaskFormComponent, TaskFormData } from './task-form.component';
 
 describe('TaskFormComponent', () => {
   let fixture: ComponentFixture<TaskFormComponent>;

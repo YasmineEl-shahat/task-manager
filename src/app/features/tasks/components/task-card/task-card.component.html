@@ -67,11 +67,7 @@
 
   <!-- Screen reader / test-friendly action triggers -->
   <div class="sr-only">
-    <button
-      type="button"
-      (click)="onEdit($event)"
-      [attr.aria-label]="'Edit task: ' + task().title"
-    >
+    <button type="button" (click)="onEdit($event)" [attr.aria-label]="'Edit task: ' + task().title">
       Edit
     </button>
     <button
@@ -84,11 +80,7 @@
   </div>
 
   <mat-menu #taskMenu="matMenu" xPosition="before">
-    <button
-      mat-menu-item
-      (click)="onEdit($event)"
-      [attr.aria-label]="'Edit task: ' + task().title"
-    >
+    <button mat-menu-item (click)="onEdit($event)" [attr.aria-label]="'Edit task: ' + task().title">
       <mat-icon>edit</mat-icon>
       <span>Edit</span>
     </button>

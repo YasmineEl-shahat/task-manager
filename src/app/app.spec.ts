@@ -11,11 +11,7 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [
-        provideRouter([]),
-        provideHttpClient(withFetch()),
-        provideHttpClientTesting(),
-      ],
+      providers: [provideRouter([]), provideHttpClient(withFetch()), provideHttpClientTesting()],
     }).compileComponents();
   });
 

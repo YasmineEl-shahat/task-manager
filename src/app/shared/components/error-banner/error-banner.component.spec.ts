@@ -29,16 +29,12 @@ describe('ErrorBannerComponent', () => {
   });
 
   it('shows a Retry button by default', () => {
-    const btn = fixture.debugElement.query(
-      By.css('[aria-label="Retry the failed request"]'),
-    );
+    const btn = fixture.debugElement.query(By.css('[aria-label="Retry the failed request"]'));
     expect(btn).toBeTruthy();
   });
 
   it('shows a Dismiss button by default', () => {
-    const btn = fixture.debugElement.query(
-      By.css('[aria-label="Dismiss error"]'),
-    );
+    const btn = fixture.debugElement.query(By.css('[aria-label="Dismiss error"]'));
     expect(btn).toBeTruthy();
   });
 
@@ -46,9 +42,7 @@ describe('ErrorBannerComponent', () => {
     const spy = vi.fn();
     component.retry.subscribe(spy);
 
-    const btn = fixture.debugElement.query(
-      By.css('[aria-label="Retry the failed request"]'),
-    );
+    const btn = fixture.debugElement.query(By.css('[aria-label="Retry the failed request"]'));
     btn.nativeElement.click();
     expect(spy).toHaveBeenCalledOnce();
   });
@@ -57,9 +51,7 @@ describe('ErrorBannerComponent', () => {
     const spy = vi.fn();
     component.dismiss.subscribe(spy);
 
-    const btn = fixture.debugElement.query(
-      By.css('[aria-label="Dismiss error"]'),
-    );
+    const btn = fixture.debugElement.query(By.css('[aria-label="Dismiss error"]'));
     btn.nativeElement.click();
     expect(spy).toHaveBeenCalledOnce();
   });

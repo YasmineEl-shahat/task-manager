@@ -6,8 +6,8 @@ import { By } from '@angular/platform-browser';
 import { LoadingSpinnerComponent } from './loading-spinner.component';
 
 @Component({
-  selector: 'host-default',
-  changeDetection: ChangeDetectionStrategy.Default,
+  selector: 'app-host-default',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [LoadingSpinnerComponent],
   template: `<app-loading-spinner />`,
 })

@@ -25,9 +25,7 @@ describe('SidebarComponent', () => {
     const links = fixture.debugElement.queryAll(By.css('a.nav-item'));
     expect(links.length).toBeGreaterThanOrEqual(2);
 
-    const dashboardLink = links.find((l) =>
-      l.nativeElement.textContent.includes('Dashboard'),
-    );
+    const dashboardLink = links.find((l) => l.nativeElement.textContent.includes('Dashboard'));
     expect(dashboardLink).toBeTruthy();
     expect(dashboardLink?.nativeElement.getAttribute('href')).toBe('/dashboard');
   });

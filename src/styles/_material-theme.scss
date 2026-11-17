@@ -63,7 +63,9 @@ mat-card.mat-mdc-card {
   border: 1px solid var(--color-border-card) !important;
   background-color: var(--color-bg-surface) !important;
   box-shadow: var(--shadow-card) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 
   &.mat-mdc-card-outlined {
     border-color: var(--color-border-card) !important;

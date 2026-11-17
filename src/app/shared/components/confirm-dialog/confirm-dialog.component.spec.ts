@@ -39,7 +39,9 @@ describe('ConfirmDialogComponent', () => {
     const message = fixture.debugElement.query(By.css('mat-dialog-content p'));
 
     expect(title.nativeElement.textContent).toContain('Delete Task?');
-    expect(message.nativeElement.textContent).toContain('Are you sure you want to delete this task?');
+    expect(message.nativeElement.textContent).toContain(
+      'Are you sure you want to delete this task?',
+    );
   });
 
   it('closes dialog with true on confirm', () => {
