@@ -4,26 +4,128 @@
       "id": "task-001",
       "title": "Design new homepage layout",
       "description": "Create wireframes and mockups for the new homepage redesign with modern UI elements",
-      "status": "in_progress",
+      "status": "todo",
       "priority": "high",
-      "dueDate": "2026-11-17",
+      "dueDate": "2026-11-18",
       "assignee": {
         "id": "user-001",
         "name": "John Doe",
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": [
-        "Design"
-      ],
-      "createdAt": "2026-11-13T14:48:15.501Z",
-      "updatedAt": "2026-11-15T14:48:15.501Z"
+      "tags": ["Design"],
+      "createdAt": "2026-11-14T22:44:56.244Z",
+      "updatedAt": "2026-11-16T22:44:56.244Z"
     },
     {
       "id": "task-002",
       "title": "Update documentation",
       "description": "Review and update API documentation for v2.0 release",
       "status": "todo",
+      "priority": "medium",
+      "dueDate": "2026-11-21",
+      "assignee": {
+        "id": "user-002",
+        "name": "Sarah Smith",
+        "avatar": "SS",
+        "email": "sarah.smith@company.com"
+      },
+      "tags": ["Documentation"],
+      "createdAt": "2026-11-13T22:44:56.244Z",
+      "updatedAt": "2026-11-15T22:44:56.244Z"
+    },
+    {
+      "id": "task-003",
+      "title": "Organize team meeting",
+      "description": "Schedule and prepare agenda for quarterly planning session",
+      "status": "todo",
+      "priority": "low",
+      "dueDate": "2026-11-23",
+      "assignee": {
+        "id": "user-003",
+        "name": "Mike Johnson",
+        "avatar": "MJ",
+        "email": "mike.johnson@company.com"
+      },
+      "tags": ["Admin"],
+      "createdAt": "2026-11-12T22:44:56.244Z",
+      "updatedAt": "2026-11-15T22:44:56.244Z"
+    },
+    {
+      "id": "task-015",
+      "title": "Prepare Q4 budget report",
+      "description": "Compile and analyze financial data for quarterly budget presentation",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-11-14",
+      "isOverdue": true,
+      "assignee": {
+        "id": "user-002",
+        "name": "Sarah Smith",
+        "avatar": "SS",
+        "email": "sarah.smith@company.com"
+      },
+      "tags": ["Finance"],
+      "createdAt": "2026-10-31T22:44:56.244Z",
+      "updatedAt": "2026-11-16T22:44:56.244Z"
+    },
+    {
+      "id": "task-016",
+      "title": "Review client feedback",
+      "description": "Analyze customer feedback from user testing sessions",
+      "status": "todo",
+      "priority": "medium",
+      "dueDate": "2026-11-13",
+      "isOverdue": true,
+      "assignee": {
+        "id": "user-004",
+        "name": "Emily Davis",
+        "avatar": "ED",
+        "email": "emily.davis@company.com"
+      },
+      "tags": ["Research"],
+      "createdAt": "2026-11-01T22:44:56.244Z",
+      "updatedAt": "2026-11-15T22:44:56.244Z"
+    },
+    {
+      "id": "task-004",
+      "title": "Fix responsive design issues",
+      "description": "Address layout problems on mobile and tablet devices",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-11-19",
+      "assignee": {
+        "id": "user-004",
+        "name": "Emily Davis",
+        "avatar": "ED",
+        "email": "emily.davis@company.com"
+      },
+      "tags": ["Frontend"],
+      "createdAt": "2026-11-11T22:44:56.244Z",
+      "updatedAt": "2026-11-16T22:44:56.244Z"
+    },
+    {
+      "id": "task-005",
+      "title": "Implement user authentication",
+      "description": "Add JWT-based authentication system with refresh tokens",
+      "status": "in_progress",
+      "priority": "high",
+      "dueDate": "2026-11-19",
+      "assignee": {
+        "id": "user-001",
+        "name": "John Doe",
+        "avatar": "JD",
+        "email": "john.doe@company.com"
+      },
+      "tags": ["Backend"],
+      "createdAt": "2026-11-09T22:44:56.244Z",
+      "updatedAt": "2026-11-16T22:44:56.244Z"
+    },
+    {
+      "id": "task-006",
+      "title": "Optimize database queries",
+      "description": "Review and optimize slow queries identified in performance audit",
+      "status": "in_progress",
       "priority": "medium",
       "dueDate": "2026-11-20",
       "assignee": {
@@ -32,127 +134,9 @@
         "avatar": "SS",
         "email": "sarah.smith@company.com"
       },
-      "tags": [
-        "Documentation"
-      ],
-      "createdAt": "2026-11-12T14:48:15.501Z",
-      "updatedAt": "2026-11-14T14:48:15.501Z"
-    },
-    {
-      "id": "task-003",
-      "title": "Organize team meeting",
-      "description": "Schedule and prepare agenda for quarterly planning session",
-      "status": "todo",
-      "priority": "low",
-      "dueDate": "2026-11-22",
-      "assignee": {
-        "id": "user-003",
-        "name": "Mike Johnson",
-        "avatar": "MJ",
-        "email": "mike.johnson@company.com"
-      },
-      "tags": [
-        "Admin"
-      ],
-      "createdAt": "2026-11-11T14:48:15.501Z",
-      "updatedAt": "2026-11-14T14:48:15.501Z"
-    },
-    {
-      "id": "task-015",
-      "title": "Prepare Q4 budget report",
-      "description": "Compile and analyze financial data for quarterly budget presentation",
-      "status": "todo",
-      "priority": "high",
-      "dueDate": "2026-11-13",
-      "isOverdue": true,
-      "assignee": {
-        "id": "user-002",
-        "name": "Sarah Smith",
-        "avatar": "SS",
-        "email": "sarah.smith@company.com"
-      },
-      "tags": [
-        "Finance"
-      ],
-      "createdAt": "2026-10-30T14:48:15.501Z",
-      "updatedAt": "2026-11-15T14:48:15.501Z"
-    },
-    {
-      "id": "task-016",
-      "title": "Review client feedback",
-      "description": "Analyze customer feedback from user testing sessions",
-      "status": "todo",
-      "priority": "medium",
-      "dueDate": "2026-11-12",
-      "isOverdue": true,
-      "assignee": {
-        "id": "user-004",
-        "name": "Emily Davis",
-        "avatar": "ED",
-        "email": "emily.davis@company.com"
-      },
-      "tags": [
-        "Research"
-      ],
-      "createdAt": "2026-10-31T14:48:15.501Z",
-      "updatedAt": "2026-11-14T14:48:15.501Z"
-    },
-    {
-      "id": "task-004",
-      "title": "Fix responsive design issues",
-      "description": "Address layout problems on mobile and tablet devices",
-      "status": "todo",
-      "priority": "high",
-      "dueDate": "2026-11-18",
-      "assignee": {
-        "id": "user-004",
-        "name": "Emily Davis",
-        "avatar": "ED",
-        "email": "emily.davis@company.com"
-      },
-      "tags": [
-        "Frontend"
-      ],
-      "createdAt": "2026-11-10T14:48:15.501Z",
-      "updatedAt": "2026-11-15T14:48:15.501Z"
-    },
-    {
-      "id": "task-005",
-      "title": "Implement user authentication",
-      "description": "Add JWT-based authentication system with refresh tokens",
-      "status": "in_progress",
-      "priority": "high",
-      "dueDate": "2026-11-18",
-      "assignee": {
-        "id": "user-001",
-        "name": "John Doe",
-        "avatar": "JD",
-        "email": "john.doe@company.com"
-      },
-      "tags": [
-        "Backend"
-      ],
-      "createdAt": "2026-11-08T14:48:15.501Z",
-      "updatedAt": "2026-11-15T14:48:15.501Z"
-    },
-    {
-      "id": "task-006",
-      "title": "Optimize database queries",
-      "description": "Review and optimize slow queries identified in performance audit",
-      "status": "in_progress",
-      "priority": "medium",
-      "dueDate": "2026-11-19",
-      "assignee": {
-        "id": "user-002",
-        "name": "Sarah Smith",
-        "avatar": "SS",
-        "email": "sarah.smith@company.com"
-      },
-      "tags": [
-        "Performance"
-      ],
-      "createdAt": "2026-11-09T14:48:15.501Z",
-      "updatedAt": "2026-11-14T14:48:15.501Z"
+      "tags": ["Performance"],
+      "createdAt": "2026-11-10T22:44:56.244Z",
+      "updatedAt": "2026-11-15T22:44:56.244Z"
     },
     {
       "id": "task-007",
@@ -160,18 +144,16 @@
       "description": "Develop RESTful API endpoints for task management features",
       "status": "in_progress",
       "priority": "high",
-      "dueDate": "2026-11-17",
+      "dueDate": "2026-11-18",
       "assignee": {
         "id": "user-003",
         "name": "Mike Johnson",
         "avatar": "MJ",
         "email": "mike.johnson@company.com"
       },
-      "tags": [
-        "Backend"
-      ],
-      "createdAt": "2026-11-07T14:48:15.501Z",
-      "updatedAt": "2026-11-15T14:48:15.501Z"
+      "tags": ["Backend"],
+      "createdAt": "2026-11-08T22:44:56.244Z",
+      "updatedAt": "2026-11-16T22:44:56.244Z"
     },
     {
       "id": "task-008",
@@ -179,18 +161,16 @@
       "description": "Implement theme toggle with dark/light mode preferences",
       "status": "in_progress",
       "priority": "medium",
-      "dueDate": "2026-11-21",
+      "dueDate": "2026-11-22",
       "assignee": {
         "id": "user-004",
         "name": "Emily Davis",
         "avatar": "ED",
         "email": "emily.davis@company.com"
       },
-      "tags": [
-        "Frontend"
-      ],
-      "createdAt": "2026-11-06T14:48:15.501Z",
-      "updatedAt": "2026-11-14T14:48:15.501Z"
+      "tags": ["Frontend"],
+      "createdAt": "2026-11-07T22:44:56.244Z",
+      "updatedAt": "2026-11-15T22:44:56.244Z"
     },
     {
       "id": "task-017",
@@ -198,7 +178,7 @@
       "description": "Migrate to new payment provider API and update billing logic",
       "status": "in_progress",
       "priority": "high",
-      "dueDate": "2026-11-14",
+      "dueDate": "2026-11-15",
       "isOverdue": true,
       "assignee": {
         "id": "user-001",
@@ -206,12 +186,9 @@
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": [
-        "Backend",
-        "Critical"
-      ],
-      "createdAt": "2026-11-01T14:48:15.501Z",
-      "updatedAt": "2026-11-15T14:48:15.501Z"
+      "tags": ["Backend", "Critical"],
+      "createdAt": "2026-11-02T22:44:56.244Z",
+      "updatedAt": "2026-11-16T22:44:56.244Z"
     },
     {
       "id": "task-009",
@@ -219,19 +196,17 @@
       "description": "Resolved issue preventing users from logging in on mobile devices",
       "status": "done",
       "priority": "high",
-      "dueDate": "2026-11-14",
-      "completedAt": "2026-11-15T14:48:15.501Z",
+      "dueDate": "2026-11-15",
+      "completedAt": "2026-11-16T22:44:56.244Z",
       "assignee": {
         "id": "user-003",
         "name": "Mike Johnson",
         "avatar": "MJ",
         "email": "mike.johnson@company.com"
       },
-      "tags": [
-        "Bug Fix"
-      ],
-      "createdAt": "2026-11-13T14:48:15.501Z",
-      "updatedAt": "2026-11-15T14:48:15.501Z"
+      "tags": ["Bug Fix"],
+      "createdAt": "2026-11-14T22:44:56.244Z",
+      "updatedAt": "2026-11-16T22:44:56.244Z"
     },
     {
       "id": "task-010",
@@ -239,19 +214,17 @@
       "description": "Configured GitHub Actions for automated testing and deployment",
       "status": "done",
       "priority": "medium",
-      "dueDate": "2026-11-13",
-      "completedAt": "2026-11-14T14:48:15.501Z",
+      "dueDate": "2026-11-14",
+      "completedAt": "2026-11-15T22:44:56.244Z",
       "assignee": {
         "id": "user-001",
         "name": "John Doe",
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": [
-        "DevOps"
-      ],
-      "createdAt": "2026-11-06T14:48:15.501Z",
-      "updatedAt": "2026-11-14T14:48:15.501Z"
+      "tags": ["DevOps"],
+      "createdAt": "2026-11-07T22:44:56.244Z",
+      "updatedAt": "2026-11-15T22:44:56.244Z"
     },
     {
       "id": "task-011",
@@ -259,19 +232,17 @@
       "description": "Add comprehensive unit tests for authentication module",
       "status": "done",
       "priority": "high",
-      "dueDate": "2026-11-12",
-      "completedAt": "2026-11-13T14:48:15.501Z",
+      "dueDate": "2026-11-13",
+      "completedAt": "2026-11-14T22:44:56.244Z",
       "assignee": {
         "id": "user-002",
         "name": "Sarah Smith",
         "avatar": "SS",
         "email": "sarah.smith@company.com"
       },
-      "tags": [
-        "Testing"
-      ],
-      "createdAt": "2026-11-05T14:48:15.501Z",
-      "updatedAt": "2026-11-13T14:48:15.501Z"
+      "tags": ["Testing"],
+      "createdAt": "2026-11-06T22:44:56.244Z",
+      "updatedAt": "2026-11-14T22:44:56.244Z"
     },
     {
       "id": "task-012",
@@ -279,19 +250,17 @@
       "description": "Clean up and optimize payment processing code",
       "status": "done",
       "priority": "medium",
-      "dueDate": "2026-11-11",
-      "completedAt": "2026-11-12T14:48:15.501Z",
+      "dueDate": "2026-11-12",
+      "completedAt": "2026-11-13T22:44:56.244Z",
       "assignee": {
         "id": "user-004",
         "name": "Emily Davis",
         "avatar": "ED",
         "email": "emily.davis@company.com"
       },
-      "tags": [
-        "Refactoring"
-      ],
-      "createdAt": "2026-11-03T14:48:15.501Z",
-      "updatedAt": "2026-11-12T14:48:15.501Z"
+      "tags": ["Refactoring"],
+      "createdAt": "2026-11-04T22:44:56.244Z",
+      "updatedAt": "2026-11-13T22:44:56.244Z"
     },
     {
       "id": "task-013",
@@ -299,19 +268,17 @@
       "description": "Conduct comprehensive security review of the application",
       "status": "done",
       "priority": "high",
-      "dueDate": "2026-11-10",
-      "completedAt": "2026-11-11T14:48:15.501Z",
+      "dueDate": "2026-11-11",
+      "completedAt": "2026-11-12T22:44:56.244Z",
       "assignee": {
         "id": "user-001",
         "name": "John Doe",
         "avatar": "JD",
         "email": "john.doe@company.com"
       },
-      "tags": [
-        "Security"
-      ],
-      "createdAt": "2026-11-02T14:48:15.501Z",
-      "updatedAt": "2026-11-11T14:48:15.501Z"
+      "tags": ["Security"],
+      "createdAt": "2026-11-03T22:44:56.244Z",
+      "updatedAt": "2026-11-12T22:44:56.244Z"
     },
     {
       "id": "task-014",
@@ -319,19 +286,17 @@
       "description": "Update all npm packages to latest stable versions",
       "status": "done",
       "priority": "low",
-      "dueDate": "2026-11-09",
-      "completedAt": "2026-11-10T14:48:15.501Z",
+      "dueDate": "2026-11-10",
+      "completedAt": "2026-11-11T22:44:56.244Z",
       "assignee": {
         "id": "user-003",
         "name": "Mike Johnson",
         "avatar": "MJ",
         "email": "mike.johnson@company.com"
       },
-      "tags": [
-        "Maintenance"
-      ],
-      "createdAt": "2026-11-01T14:48:15.501Z",
-      "updatedAt": "2026-11-10T14:48:15.501Z"
+      "tags": ["Maintenance"],
+      "createdAt": "2026-11-02T22:44:56.244Z",
+      "updatedAt": "2026-11-11T22:44:56.244Z"
     }
   ],
   "users": [
@@ -360,5 +325,60 @@
       "email": "emily.davis@company.com"
     }
   ],
-  "activities": []
+  "activities": [
+    {
+      "id": "act-001",
+      "taskId": "task-001",
+      "taskTitle": "Design new homepage layout",
+      "action": "created",
+      "performedBy": "John Doe",
+      "description": "Created task \"Design new homepage layout\"",
+      "createdAt": "2026-11-16T22:32:56.249Z"
+    },
+    {
+      "id": "act-002",
+      "taskId": "task-004",
+      "taskTitle": "Fix navigation bar bug",
+      "action": "status_changed",
+      "performedBy": "Sarah Smith",
+      "description": "Moved \"Fix navigation bar bug\" to In Progress",
+      "createdAt": "2026-11-16T22:09:56.249Z"
+    },
+    {
+      "id": "act-003",
+      "taskId": "task-007",
+      "taskTitle": "Deploy to staging",
+      "action": "status_changed",
+      "performedBy": "Mike Johnson",
+      "description": "Completed \"Deploy to staging\"",
+      "createdAt": "2026-11-16T21:19:56.249Z"
+    },
+    {
+      "id": "act-004",
+      "taskId": "task-002",
+      "taskTitle": "Update documentation",
+      "action": "assigned",
+      "performedBy": "Emily Davis",
+      "description": "Assigned \"Update documentation\" to Sarah Smith",
+      "createdAt": "2026-11-16T19:34:56.249Z"
+    },
+    {
+      "id": "act-005",
+      "taskId": "task-005",
+      "taskTitle": "Setup CI/CD pipeline",
+      "action": "updated",
+      "performedBy": "John Doe",
+      "description": "Updated priority to High for \"Setup CI/CD pipeline\"",
+      "createdAt": "2026-11-16T17:24:56.249Z"
+    },
+    {
+      "id": "act-006",
+      "taskId": "task-015",
+      "taskTitle": "Prepare Q4 budget report",
+      "action": "created",
+      "performedBy": "Sarah Smith",
+      "description": "Created task \"Prepare Q4 budget report\"",
+      "createdAt": "2026-11-15T22:44:56.249Z"
+    }
+  ]
 }

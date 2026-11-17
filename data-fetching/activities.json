@@ -1,0 +1,58 @@
+{
+  "activities": [
+    {
+      "id": "act-001",
+      "taskId": "task-001",
+      "taskTitle": "Design new homepage layout",
+      "action": "created",
+      "performedBy": "John Doe",
+      "description": "Created task \"Design new homepage layout\"",
+      "createdAt": "2026-11-16T22:32:56.249Z"
+    },
+    {
+      "id": "act-002",
+      "taskId": "task-004",
+      "taskTitle": "Fix navigation bar bug",
+      "action": "status_changed",
+      "performedBy": "Sarah Smith",
+      "description": "Moved \"Fix navigation bar bug\" to In Progress",
+      "createdAt": "2026-11-16T22:09:56.249Z"
+    },
+    {
+      "id": "act-003",
+      "taskId": "task-007",
+      "taskTitle": "Deploy to staging",
+      "action": "status_changed",
+      "performedBy": "Mike Johnson",
+      "description": "Completed \"Deploy to staging\"",
+      "createdAt": "2026-11-16T21:19:56.249Z"
+    },
+    {
+      "id": "act-004",
+      "taskId": "task-002",
+      "taskTitle": "Update documentation",
+      "action": "assigned",
+      "performedBy": "Emily Davis",
+      "description": "Assigned \"Update documentation\" to Sarah Smith",
+      "createdAt": "2026-11-16T19:34:56.249Z"
+    },
+    {
+      "id": "act-005",
+      "taskId": "task-005",
+      "taskTitle": "Setup CI/CD pipeline",
+      "action": "updated",
+      "performedBy": "John Doe",
+      "description": "Updated priority to High for \"Setup CI/CD pipeline\"",
+      "createdAt": "2026-11-16T17:24:56.249Z"
+    },
+    {
+      "id": "act-006",
+      "taskId": "task-015",
+      "taskTitle": "Prepare Q4 budget report",
+      "action": "created",
+      "performedBy": "Sarah Smith",
+      "description": "Created task \"Prepare Q4 budget report\"",
+      "createdAt": "2026-11-15T22:44:56.249Z"
+    }
+  ]
+}

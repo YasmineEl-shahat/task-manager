@@ -21,10 +21,20 @@ const users = [
   ).values(),
 ];
 
+let activities = [];
+try {
+  const activitiesResponse = readJson('activities.json');
+  activities = Array.isArray(activitiesResponse)
+    ? activitiesResponse
+    : activitiesResponse.activities || [];
+} catch (e) {
+  activities = [];
+}
+
 const database = {
   tasks,
   users,
-  activities: [],
+  activities,
 };
 
 const outputPath = path.join(__dirname, 'db.json');

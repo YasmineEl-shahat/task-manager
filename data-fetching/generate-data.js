@@ -47,7 +47,7 @@ function generateStatistics() {
         change: '+12',
         changeLabel: 'this week',
         changeType: 'positive',
-        color: '#1976D2'
+        color: '#1976D2',
       },
       {
         id: 'stat-002',
@@ -57,7 +57,7 @@ function generateStatistics() {
         change: '+8',
         changeLabel: 'today',
         changeType: 'positive',
-        color: '#388E3C'
+        color: '#388E3C',
       },
       {
         id: 'stat-003',
@@ -67,7 +67,7 @@ function generateStatistics() {
         change: '0',
         changeLabel: 'Same as yesterday',
         changeType: 'neutral',
-        color: '#FF6F00'
+        color: '#FF6F00',
       },
       {
         id: 'stat-004',
@@ -77,10 +77,10 @@ function generateStatistics() {
         change: '+3',
         changeLabel: 'today',
         changeType: 'negative',
-        color: '#D32F2F'
-      }
+        color: '#D32F2F',
+      },
     ],
-    lastUpdated: new Date().toISOString()
+    lastUpdated: new Date().toISOString(),
   };
 }
 
@@ -106,7 +106,8 @@ function generateTasks() {
     {
       id: 'task-001',
       title: 'Design new homepage layout',
-      description: 'Create wireframes and mockups for the new homepage redesign with modern UI elements',
+      description:
+        'Create wireframes and mockups for the new homepage redesign with modern UI elements',
       status: 'todo',
       priority: 'high',
       dueDate: formatDate(addDays(now, 2)), // Due in 2 days
@@ -114,11 +115,11 @@ function generateTasks() {
         id: 'user-001',
         name: 'John Doe',
         avatar: 'JD',
-        email: 'john.doe@company.com'
+        email: 'john.doe@company.com',
       },
       tags: ['Design'],
       createdAt: addDays(now, -2).toISOString(),
-      updatedAt: now.toISOString()
+      updatedAt: now.toISOString(),
     },
     {
       id: 'task-002',
@@ -131,11 +132,11 @@ function generateTasks() {
         id: 'user-002',
         name: 'Sarah Smith',
         avatar: 'SS',
-        email: 'sarah.smith@company.com'
+        email: 'sarah.smith@company.com',
       },
       tags: ['Documentation'],
       createdAt: addDays(now, -3).toISOString(),
-      updatedAt: addDays(now, -1).toISOString()
+      updatedAt: addDays(now, -1).toISOString(),
     },
     {
       id: 'task-003',
@@ -148,11 +149,11 @@ function generateTasks() {
         id: 'user-003',
         name: 'Mike Johnson',
         avatar: 'MJ',
-        email: 'mike.johnson@company.com'
+        email: 'mike.johnson@company.com',
       },
       tags: ['Admin'],
       createdAt: addDays(now, -4).toISOString(),
-      updatedAt: addDays(now, -1).toISOString()
+      updatedAt: addDays(now, -1).toISOString(),
     },
     // OVERDUE TO DO TASKS
     {
@@ -167,11 +168,11 @@ function generateTasks() {
         id: 'user-002',
         name: 'Sarah Smith',
         avatar: 'SS',
-        email: 'sarah.smith@company.com'
+        email: 'sarah.smith@company.com',
       },
       tags: ['Finance'],
       createdAt: addDays(now, -16).toISOString(),
-      updatedAt: now.toISOString()
+      updatedAt: now.toISOString(),
     },
     {
       id: 'task-016',
@@ -185,11 +186,11 @@ function generateTasks() {
         id: 'user-004',
         name: 'Emily Davis',
         avatar: 'ED',
-        email: 'emily.davis@company.com'
+        email: 'emily.davis@company.com',
       },
       tags: ['Research'],
       createdAt: addDays(now, -15).toISOString(),
-      updatedAt: addDays(now, -1).toISOString()
+      updatedAt: addDays(now, -1).toISOString(),
     },
     {
       id: 'task-004',
@@ -202,11 +203,11 @@ function generateTasks() {
         id: 'user-004',
         name: 'Emily Davis',
         avatar: 'ED',
-        email: 'emily.davis@company.com'
+        email: 'emily.davis@company.com',
       },
       tags: ['Frontend'],
       createdAt: addDays(now, -5).toISOString(),
-      updatedAt: now.toISOString()
+      updatedAt: now.toISOString(),
     },
 
     // IN PROGRESS TASKS
@@ -221,11 +222,11 @@ function generateTasks() {
         id: 'user-001',
         name: 'John Doe',
         avatar: 'JD',
-        email: 'john.doe@company.com'
+        email: 'john.doe@company.com',
       },
       tags: ['Backend'],
       createdAt: addDays(now, -7).toISOString(),
-      updatedAt: now.toISOString()
+      updatedAt: now.toISOString(),
     },
     {
       id: 'task-006',
@@ -238,11 +239,11 @@ function generateTasks() {
         id: 'user-002',
         name: 'Sarah Smith',
         avatar: 'SS',
-        email: 'sarah.smith@company.com'
+        email: 'sarah.smith@company.com',
       },
       tags: ['Performance'],
       createdAt: addDays(now, -6).toISOString(),
-      updatedAt: addDays(now, -0.5).toISOString()
+      updatedAt: addDays(now, -0.5).toISOString(),
     },
     {
       id: 'task-007',
@@ -255,11 +256,11 @@ function generateTasks() {
         id: 'user-003',
         name: 'Mike Johnson',
         avatar: 'MJ',
-        email: 'mike.johnson@company.com'
+        email: 'mike.johnson@company.com',
       },
       tags: ['Backend'],
       createdAt: addDays(now, -8).toISOString(),
-      updatedAt: now.toISOString()
+      updatedAt: now.toISOString(),
     },
     {
       id: 'task-008',
@@ -272,11 +273,11 @@ function generateTasks() {
         id: 'user-004',
         name: 'Emily Davis',
         avatar: 'ED',
-        email: 'emily.davis@company.com'
+        email: 'emily.davis@company.com',
       },
       tags: ['Frontend'],
       createdAt: addDays(now, -9).toISOString(),
-      updatedAt: addDays(now, -0.3).toISOString()
+      updatedAt: addDays(now, -0.3).toISOString(),
     },
     // OVERDUE IN PROGRESS TASK
     {
@@ -291,11 +292,11 @@ function generateTasks() {
         id: 'user-001',
         name: 'John Doe',
         avatar: 'JD',
-        email: 'john.doe@company.com'
+        email: 'john.doe@company.com',
       },
       tags: ['Backend', 'Critical'],
       createdAt: addDays(now, -14).toISOString(),
-      updatedAt: now.toISOString()
+      updatedAt: now.toISOString(),
     },
 
     // DONE TASKS
@@ -311,11 +312,11 @@ function generateTasks() {
         id: 'user-003',
         name: 'Mike Johnson',
         avatar: 'MJ',
-        email: 'mike.johnson@company.com'
+        email: 'mike.johnson@company.com',
       },
       tags: ['Bug Fix'],
       createdAt: addDays(now, -2).toISOString(),
-      updatedAt: now.toISOString()
+      updatedAt: now.toISOString(),
     },
     {
       id: 'task-010',
@@ -329,11 +330,11 @@ function generateTasks() {
         id: 'user-001',
         name: 'John Doe',
         avatar: 'JD',
-        email: 'john.doe@company.com'
+        email: 'john.doe@company.com',
       },
       tags: ['DevOps'],
       createdAt: addDays(now, -9).toISOString(),
-      updatedAt: addDays(now, -1).toISOString()
+      updatedAt: addDays(now, -1).toISOString(),
     },
     {
       id: 'task-011',
@@ -347,11 +348,11 @@ function generateTasks() {
         id: 'user-002',
         name: 'Sarah Smith',
         avatar: 'SS',
-        email: 'sarah.smith@company.com'
+        email: 'sarah.smith@company.com',
       },
       tags: ['Testing'],
       createdAt: addDays(now, -10).toISOString(),
-      updatedAt: addDays(now, -2).toISOString()
+      updatedAt: addDays(now, -2).toISOString(),
     },
     {
       id: 'task-012',
@@ -365,11 +366,11 @@ function generateTasks() {
         id: 'user-004',
         name: 'Emily Davis',
         avatar: 'ED',
-        email: 'emily.davis@company.com'
+        email: 'emily.davis@company.com',
       },
       tags: ['Refactoring'],
       createdAt: addDays(now, -12).toISOString(),
-      updatedAt: addDays(now, -3).toISOString()
+      updatedAt: addDays(now, -3).toISOString(),
     },
     {
       id: 'task-013',
@@ -383,11 +384,11 @@ function generateTasks() {
         id: 'user-001',
         name: 'John Doe',
         avatar: 'JD',
-        email: 'john.doe@company.com'
+        email: 'john.doe@company.com',
       },
       tags: ['Security'],
       createdAt: addDays(now, -13).toISOString(),
-      updatedAt: addDays(now, -4).toISOString()
+      updatedAt: addDays(now, -4).toISOString(),
     },
     {
       id: 'task-014',
@@ -401,20 +402,86 @@ function generateTasks() {
         id: 'user-003',
         name: 'Mike Johnson',
         avatar: 'MJ',
-        email: 'mike.johnson@company.com'
+        email: 'mike.johnson@company.com',
       },
       tags: ['Maintenance'],
       createdAt: addDays(now, -14).toISOString(),
-      updatedAt: addDays(now, -5).toISOString()
-    }
+      updatedAt: addDays(now, -5).toISOString(),
+    },
   ];
 
   return {
     tasks,
     meta: {
       totalCount: tasks.length,
-      lastUpdated: now.toISOString()
-    }
+      lastUpdated: now.toISOString(),
+    },
+  };
+}
+
+/**
+ * Generate activity feed data
+ */
+function generateActivities() {
+  const now = new Date();
+
+  return {
+    activities: [
+      {
+        id: 'act-001',
+        taskId: 'task-001',
+        taskTitle: 'Design new homepage layout',
+        action: 'created',
+        performedBy: 'John Doe',
+        description: 'Created task "Design new homepage layout"',
+        createdAt: new Date(now.getTime() - 12 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'act-002',
+        taskId: 'task-004',
+        taskTitle: 'Fix navigation bar bug',
+        action: 'status_changed',
+        performedBy: 'Sarah Smith',
+        description: 'Moved "Fix navigation bar bug" to In Progress',
+        createdAt: new Date(now.getTime() - 35 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'act-003',
+        taskId: 'task-007',
+        taskTitle: 'Deploy to staging',
+        action: 'status_changed',
+        performedBy: 'Mike Johnson',
+        description: 'Completed "Deploy to staging"',
+        createdAt: new Date(now.getTime() - 85 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'act-004',
+        taskId: 'task-002',
+        taskTitle: 'Update documentation',
+        action: 'assigned',
+        performedBy: 'Emily Davis',
+        description: 'Assigned "Update documentation" to Sarah Smith',
+        createdAt: new Date(now.getTime() - 190 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'act-005',
+        taskId: 'task-005',
+        taskTitle: 'Setup CI/CD pipeline',
+        action: 'updated',
+        performedBy: 'John Doe',
+        description: 'Updated priority to High for "Setup CI/CD pipeline"',
+        createdAt: new Date(now.getTime() - 320 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 'act-006',
+        taskId: 'task-015',
+        taskTitle: 'Prepare Q4 budget report',
+        action: 'created',
+        performedBy: 'Sarah Smith',
+        description: 'Created task "Prepare Q4 budget report"',
+        createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
   };
 }
 
@@ -443,6 +510,10 @@ function main() {
     // Generate and write tasks
     const tasks = generateTasks();
     writeJsonFile('tasks.json', tasks);
+
+    // Generate and write activities
+    const activities = generateActivities();
+    writeJsonFile('activities.json', activities);
 
     console.log('\n✨ All data files generated successfully!');
     console.log(`📅 Generated on: ${new Date().toLocaleString()}`);
