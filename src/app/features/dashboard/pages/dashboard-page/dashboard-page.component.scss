@@ -37,6 +37,10 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-3, 0.75rem);
+  background: var(--color-white-solid, #ffffff);
+  box-shadow: var(--box-shadow-default, 0px 2px 4px 0px #00000014);
+  padding: var(--spacing-lg, 1rem) var(--spacing-sm, 0.5rem);
+  border-radius: var(--radius-md, 8px);
 }
 
 .status-tabs {
@@ -44,7 +48,6 @@
   align-items: center;
   gap: 2px;
   background: var(--color-white-solid, #ffffff);
-  border: 1px solid var(--color-grey-88, #e0e0e0);
   border-radius: var(--radius-sm, 6px);
   padding: 3px;
 }
